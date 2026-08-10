@@ -274,7 +274,7 @@ export async function closeTicket(channel, closer, reason = 'No reason provided'
         if (ticketCreator) {
           const dmEmbed = createEmbed({
             title: '🎫 تم إغلاق تكت',
-            description: `التكت للك **${channel.name}** تم إغلاقه.\n\n**السبب:** ${reason}\n**مغلق بواسطة:** ${closer.tag}\n**تم الغلاق على الساعة:** <t:${Math.floor(Date.now() / 1000)}:F>\n\nشكرًا لك على استخدام نظام الدعم الخاص بنا! إذا كان لديك أي أسئلة أخرى، فلا تتردد في إنشاء تكت جديدة.`,
+            description: `التكت للك **${channel.name}** تم إغلاقه.\n\n**السبب:** ${reason}\n**مغلق بواسطة:** @ ${closer.tag}\n**تم الغلاق على الساعة:** <t:${Math.floor(Date.now() / 1000)}:F>\n\nشكرًا لك على استخدام نظام الدعم الخاص بنا! إذا كان لديك أي أسئلة أخرى، فلا تتردد في إنشاء تكت جديدة.`,
             color: '#e74c3c',
             footer: { text: `تكت ID: ${ticketData.id}` }
           });
