@@ -90,7 +90,7 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
     if (currentTicketCount >= maxTicketsPerUser) {
       ticketUserError(
         `تم الوصول إلى الحد الأقصى لعدد التذاكر المفتوحة لـ ${member.id}`,
-        `لقد وصلت إلى الحد الأقصى لعدد التذاكر المفتوحة (${maxTicketsPerUser}). يرجى إغلاق تذاكرك الحالية قبل إنشاء تذكرة جديدة.`,
+        `لقد وصلت إلى الحد الأقصى لعدد التذاكر المفتوحة (${maxTicketsPerUser}). يرجى إغلاق تذاكرك الحالية قبل إنشاء تكت جديدة.`,
         ErrorTypes.VALIDATION,
         { guildId: guild.id, userId: member.id, operation: 'createTicket' }
       );
