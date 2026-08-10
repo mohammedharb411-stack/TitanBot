@@ -90,7 +90,7 @@ function buildPanelButtonRow(config) {
     return new ActionRowBuilder().addComponents(
         new ButtonBuilder()
             .setCustomId('create_ticket')
-            .setLabel(config.ticketButtonLabel || 'Create Ticket')
+            .setLabel(config.ticketButtonLabel || 'إنشاء تكت')
             .setStyle(ButtonStyle.Primary)
             .setEmoji('📩'),
     );
@@ -137,7 +137,7 @@ function buildDashboardEmbed(config, guild, panelStatus = null, ticketStats = nu
 
     const rawMsg = config.ticketPanelMessage || 'Click the button below to create a support ticket.';
     const panelMsg = `\`${rawMsg.length > 60 ? rawMsg.substring(0, 60) + '…' : rawMsg}\``;
-    const btnLabel = `\`${config.ticketButtonLabel || 'Create Ticket'}\``;
+    const btnLabel = `\`${config.ticketButtonLabel || 'إنشاء تكت'}\``;
 
     let panelStatusValue = formatPanelStatusField(panelStatus);
 
@@ -186,7 +186,7 @@ function buildSelectMenu(guildId) {
                 .setEmoji('📝'),
             new StringSelectMenuOptionBuilder()
                 .setLabel('Edit Button Label')
-                .setDescription('Change the label on the Create Ticket button')
+                .setDescription('Change the label on the إنشاء تكت button')
                 .setValue('button_label')
                 .setEmoji('🏷️'),
             new StringSelectMenuOptionBuilder()
@@ -409,11 +409,11 @@ async function handleButtonLabel(selectInteraction, rootInteraction, guildConfig
                     .setCustomId('btn_label_input')
                     .setLabel('Button Label (max 80 characters)')
                     .setStyle(TextInputStyle.Short)
-                    .setValue(guildConfig.ticketButtonLabel || 'Create Ticket')
+                    .setValue(guildConfig.ticketButtonLabel || 'إنشاء تكت')
                     .setMaxLength(80)
                     .setMinLength(1)
                     .setRequired(true)
-                    .setPlaceholder('Create Ticket'),
+                    .setPlaceholder('إنشاء تكت'),
             ),
         );
 
