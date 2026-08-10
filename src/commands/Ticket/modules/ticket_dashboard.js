@@ -205,7 +205,7 @@ function buildSelectMenu(guildId) {
                 .setValue('max_tickets')
                 .setEmoji('🔢'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('ضبط قناة سجلات التذاكر')
+                .setLabel('ضبط قناة سجلات التكت')
                 .setDescription('قناة لتلقي ملاحظات التكت وأحداث دورة حياة التكت والسجلات')
                 .setValue('logs_channel')
                 .setEmoji('🎫'),
