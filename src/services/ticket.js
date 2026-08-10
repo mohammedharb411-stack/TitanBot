@@ -273,20 +273,20 @@ export async function closeTicket(channel, closer, reason = 'No reason provided'
         const ticketCreator = await channel.client.users.fetch(ticketData.userId).catch(() => null);
         if (ticketCreator) {
           const dmEmbed = createEmbed({
-            title: '🎫 Your Ticket Has Been Closed',
-            description: `Your ticket **${channel.name}** has been closed.\n\n**Reason:** ${reason}\n**Closed by:** ${closer.tag}\n**Closed at:** <t:${Math.floor(Date.now() / 1000)}:F>\n\nThank you for using our support system! If you have any further questions, feel free to create a new ticket.`,
+            title: '🎫 تم إغلاق تكت',
+            description: `التكت للك **${channel.name}** تم إغلاقه.\n\n**السبب:** ${reason}\n**مغلق بواسطة:** ${closer.tag}\n**تم الغلاق على الساعة:** <t:${Math.floor(Date.now() / 1000)}:F>\n\nشكرًا لك على استخدام نظام الدعم الخاص بنا! إذا كان لديك أي أسئلة أخرى، فلا تتردد في إنشاء تكت جديدة.`,
             color: '#e74c3c',
-            footer: { text: `Ticket ID: ${ticketData.id}` }
+            footer: { text: `تكت ID: ${ticketData.id}` }
           });
 
           await ticketCreator.send({ embeds: [dmEmbed] });
 
           try {
             const feedbackEmbed = createEmbed({
-              title: '⭐ How was your support experience?',
-              description: `We'd love to know how we did with **${channel.name}**.\nSelect a rating below — it only takes a second!`,
+              title: '⭐ كيف كانت تجربتك مع الدعم الفني؟',
+              description: `نود أن نعرف رأيك في أدائنا مع **${channel.name}**.\nاختر تقييمًا أدناه - الأمر لا يستغرق سوى ثانية!`,
               color: '#F1C40F',
-              footer: { text: 'Your feedback helps us improve.' },
+              footer: { text: 'ملاحظاتكم تساعدنا على التحسين.' },
             });
 
             const base = `ticket_feedback:${channel.guild.id}:${channel.id}`;
@@ -300,11 +300,11 @@ export async function closeTicket(channel, closer, reason = 'No reason provided'
             const declineRow = new ActionRowBuilder().addComponents(
               new ButtonBuilder()
                 .setCustomId(`ticket_feedback_comment:${channel.guild.id}:${channel.id}`)
-                .setLabel('✍️ Add Comment')
+                .setLabel('✍️ أضف تعليقًا')
                 .setStyle(ButtonStyle.Secondary),
               new ButtonBuilder()
                 .setCustomId(`ticket_feedback_decline:${channel.guild.id}:${channel.id}`)
-                .setLabel('❌ No thanks')
+                .setLabel('❌ ًلا شكرا')
                 .setStyle(ButtonStyle.Secondary),
             );
 
@@ -313,11 +313,11 @@ export async function closeTicket(channel, closer, reason = 'No reason provided'
               components: [starsRow, declineRow],
             });
           } catch (feedbackError) {
-            logger.warn(`Could not send feedback survey to ticket creator ${ticketData.userId}: ${feedbackError.message}`);
+            logger.warn(`تعذر إرسال استبيان التقييم إلى مُنشئ التكت ${ticketData.userId}: ${feedbackError.message}`);
           }
         }
       } catch (dmError) {
-          logger.warn(`Could not send DM to ticket creator ${ticketData.userId}: ${dmError.message}`);
+          logger.warn(`تعذر إرسال رسالة خاصة إلى مُنشئ التكت ${ticketData.userId}: ${dmError.message}`);
       }
     }
     
@@ -340,13 +340,13 @@ export async function closeTicket(channel, closer, reason = 'No reason provided'
         }
       }
     } catch (permError) {
-        logger.warn(`Could not update user permissions for closed ticket: ${permError.message}`);
+        logger.warn(`تعذر تحديث أذونات المستخدم للتكت المغلقة: ${permError.message}`);
     }
     
     const messages = await channel.messages.fetch();
     const ticketMessage = messages.find(m => 
       m.embeds.length > 0 && 
-      m.embeds[0].title?.startsWith('Ticket #')
+      m.embeds[0].title?.startsWith('تكت #')
     );
     
     if (ticketMessage) {
@@ -358,8 +358,8 @@ export async function closeTicket(channel, closer, reason = 'No reason provided'
       }
       
       const updatedEmbed = createEmbed({
-        title: embed.title || 'Ticket',
-        description: embed.description || 'Ticket discussion',
+        title: embed.title || 'تكت',
+        description: embed.description || 'تكت مناقشة',
         color: '#e74c3c',
         fields: embed.fields || [],
         footer: embed.footer
