@@ -12,24 +12,24 @@ import birthdaySetchannel from './modules/birthday_setchannel.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
-        .setName('birthday')
-        .setDescription('Birthday system commands')
+        .setName('عيد ميلاد')
+        .setDescription('أوامر نظام أعياد الميلاد')
         .addSubcommand(subcommand =>
             subcommand
-                .setName('set')
-                .setDescription('Set your birthday')
+                .setName('تعيين')
+                .setDescription('حدد تاريخ ميلادك')
                 .addIntegerOption(option =>
                     option
-                        .setName('month')
-                        .setDescription('Birth month (1-12)')
+                        .setName('شهر')
+                        .setDescription('شهر الميلاد (1-12)')
                         .setRequired(true)
                         .setMinValue(1)
                         .setMaxValue(12)
                 )
                 .addIntegerOption(option =>
                     option
-                        .setName('day')
-                        .setDescription('Birth day (1-31)')
+                        .setName('يوم')
+                        .setDescription('عيد ميلاد (1-31)')
                         .setRequired(true)
                         .setMinValue(1)
                         .setMaxValue(31)
@@ -37,38 +37,38 @@ export default {
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('info')
-                .setDescription('View birthday information')
+                .setName('معلومات')
+                .setDescription('عرض معلومات عيد الميلاد')
                 .addUserOption(option =>
                     option
-                        .setName('user')
-                        .setDescription('User to check birthday for')
+                        .setName('مستخدم')
+                        .setDescription('يمكن للمستخدم التحقق من تاريخ الميلاد لـ')
                         .setRequired(false)
                 )
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('list')
-                .setDescription('List all birthdays in the server')
+                .setName('قائمة')
+                .setDescription('اعرض جميع أعياد الميلاد في الخادم')
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('remove')
-                .setDescription('Remove your birthday')
+                .setName('يزيل')
+                .setDescription('قم بإزالة تاريخ ميلادك')
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('next')
-                .setDescription('Show upcoming birthdays')
+                .setName('التالي')
+                .setDescription('عرض أعياد الميلاد القادمة')
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('setchannel')
-                .setDescription('Set or disable the channel for birthday announcements. (Manage Server required)')
+                .setName('ضبط القناة')
+                .setDescription('قم بتعيين أو تعطيل القناة الخاصة بإعلانات أعياد الميلاد. (إدارة الخادم مطلوبة)')
                 .addChannelOption(option =>
                     option
-                        .setName('channel')
-                        .setDescription('The text channel for announcements. Leave empty to disable.')
+                        .setName('قناة')
+                        .setDescription('قناة الرسائل النصية للإعلانات. اتركها فارغة لتعطيلها..')
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(false)
                 )
@@ -78,20 +78,116 @@ export default {
         const subcommand = interaction.options.getSubcommand();
 
         switch (subcommand) {
-            case 'set':
+            case 'تعيين':
                 return await birthdaySet.execute(interaction, config, client);
-            case 'info':
+            case 'معلومات':
                 return await birthdayInfo.execute(interaction, config, client);
-            case 'list':
+            case 'قائمة':
                 return await birthdayList.execute(interaction, config, client);
-            case 'remove':
+            case 'يزيل':
                 return await birthdayRemove.execute(interaction, config, client);
-            case 'next':
+            case 'التالي':
                 return await nextBirthdays.execute(interaction, config, client);
-            case 'setchannel':
+            case 'ضبط القناة':
                 return await birthdaySetchannel.execute(interaction, config, client);
             default:
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Unknown subcommand' });
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'أمر فرعي غير معروف' });
+        }
+    }
+};import { SlashCommandBuilder, MessageFlags, ChannelType } from 'discord.js';
+import { createEmbed, successEmbed } from '../../utils/embeds.js';
+import { replyUserError, ErrorTypes } from '../../utils/errorHandler.js';
+
+import birthdaySet from './modules/birthday_set.js';
+import birthdayInfo from './modules/birthday_info.js';
+import birthdayList from './modules/birthday_list.js';
+import birthdayRemove from './modules/birthday_remove.js';
+import nextBirthdays from './modules/next_birthdays.js';
+import birthdaySetchannel from './modules/birthday_setchannel.js';
+
+import { InteractionHelper } from '../../utils/interactionHelper.js';
+export default {
+    data: new SlashCommandBuilder()
+        .setName('عيد ميلاد')
+        .setDescription('أوامر نظام أعياد الميلاد')
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('تعيين')
+                .setDescription('حدد تاريخ ميلادك')
+                .addIntegerOption(option =>
+                    option
+                        .setName('شهر')
+                        .setDescription('شهر الميلاد (1-12)')
+                        .setRequired(true)
+                        .setMinValue(1)
+                        .setMaxValue(12)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('يوم')
+                        .setDescription('عيد ميلاد (1-31)')
+                        .setRequired(true)
+                        .setMinValue(1)
+                        .setMaxValue(31)
+                )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('معلومات')
+                .setDescription('عرض معلومات عيد الميلاد')
+                .addUserOption(option =>
+                    option
+                        .setName('مستخدم')
+                        .setDescription('يمكن للمستخدم التحقق من تاريخ الميلاد لـ')
+                        .setRequired(false)
+                )
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('قائمة')
+                .setDescription('اعرض جميع أعياد الميلاد في الخادم')
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('يزيل')
+                .setDescription('قم بإزالة تاريخ ميلادك')
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('التالي')
+                .setDescription('عرض أعياد الميلاد القادمة')
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('ضبط القناة')
+                .setDescription('قم بتعيين أو تعطيل القناة الخاصة بإعلانات أعياد الميلاد. (إدارة الخادم مطلوبة)')
+                .addChannelOption(option =>
+                    option
+                        .setName('قناة')
+                        .setDescription('قناة الرسائل النصية للإعلانات. اتركها فارغة لتعطيلها..')
+                        .addChannelTypes(ChannelType.GuildText)
+                        .setRequired(false)
+                )
+        ),
+
+    async execute(interaction, config, client) {
+        const subcommand = interaction.options.getSubcommand();
+
+        switch (subcommand) {
+            case 'تعيين':
+                return await birthdaySet.execute(interaction, config, client);
+            case 'معلومات':
+                return await birthdayInfo.execute(interaction, config, client);
+            case 'قائمة':
+                return await birthdayList.execute(interaction, config, client);
+            case 'يزيل':
+                return await birthdayRemove.execute(interaction, config, client);
+            case 'التالي':
+                return await nextBirthdays.execute(interaction, config, client);
+            case 'ضبط القناة':
+                return await birthdaySetchannel.execute(interaction, config, client);
+            default:
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'أمر فرعي غير معروف' });
         }
     }
 };
