@@ -9,7 +9,7 @@ import { claimTicket } from '../../services/ticket.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("claim")
-        .setDescription("Claims an open ticket, assigning it to you.")
+        .setDescription("يقوم هذا النظام باستلام تكت مفتوحة، ثم يسندها إليك.")
         .setDMPermission(false),
 
     async execute(interaction, guildConfig, client) {
@@ -20,11 +20,11 @@ export default {
 
         const permissionContext = await getTicketPermissionContext({ client, interaction });
         if (!permissionContext.ticketData) {
-            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'This command can only be used in a valid ticket channel.' });
+            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'لا يمكن استخدام هذا الأمر إلا في قناة تكت صالحة.' });
         }
 
         if (!permissionContext.canManageTicket) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the `Manage Channels` permission or the configured `Ticket Staff Role` to claim tickets.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'أنت بحاجة إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن للمطالبة بالتذاكر.' });
         }
 
         await claimTicket(interaction.channel, interaction.user);
@@ -32,14 +32,14 @@ export default {
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [
                 successEmbed(
-                    "Ticket Claimed!",
-                    "You have successfully claimed this ticket.",
+                    "تم استلام التكت!",
+                    "لقد قمت باسترداد هذه التكت بنجاح.",
                 ),
             ],
         });
 
-        logger.info('Ticket claimed successfully', {
-            userId: interaction.user.id,
+        logger.info('تم استلام التكت بنجاح', {
+            userId: interaction.user.id,y
             userTag: interaction.user.tag,
             channelId: interaction.channel.id,
             channelName: interaction.channel.name,
