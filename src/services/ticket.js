@@ -53,18 +53,18 @@ function buildTicketControlRow({ claimedBy = null } = {}) {
   return new ActionRowBuilder().addComponents(
     new ButtonBuilder()
       .setCustomId('ticket_claim')
-      .setLabel(claimedBy ? 'Claimed' : 'Claim')
+      .setLabel(claimedBy ? 'تم استلام' : 'استلام')
       .setStyle(claimedBy ? ButtonStyle.Secondary : ButtonStyle.Primary)
       .setEmoji('🙋')
       .setDisabled(!!claimedBy),
     new ButtonBuilder()
       .setCustomId('ticket_pin')
-      .setLabel('Pin')
+      .setLabel('تثبيت')
       .setStyle(ButtonStyle.Secondary)
       .setEmoji('📌'),
     new ButtonBuilder()
       .setCustomId('ticket_close')
-      .setLabel('Close')
+      .setLabel('غلاق')
       .setStyle(ButtonStyle.Danger)
       .setEmoji('🔒'),
   );
@@ -173,13 +173,13 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
     const priorityInfo = PRIORITY_MAP[priority] || PRIORITY_MAP.none;
     
     const embed = createEmbed({
-      title: `Ticket #${ticketNumber}`,
-      description: `${member.toString()}, thanks for creating a ticket!\n\n**Reason:** ${reason}\n**Priority:** ${priorityInfo.emoji} ${priorityInfo.label}`,
+      title: `تكت #${ticketNumber}`,
+      description: `${member.toString()},شكراً لإنشاء تكت!\n\n**السبب:** ${reason}\n**أولوية:** ${priorityInfo.emoji} ${priorityInfo.label}`,
       color: priorityInfo.color,
       fields: [
-        { name: 'Status', value: '🟢 Open', inline: true },
-        { name: 'Claimed By', value: 'Not claimed', inline: true },
-        { name: 'Created', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true },
+        { name: 'الحالة', value: '🟢 Open', inline: true },
+        { name: 'الشخص', value: 'Not claimed', inline: true },
+        { name: 'وقت', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true },
       ],
     });
     
@@ -381,12 +381,12 @@ components: []
     const controlRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('ticket_reopen')
-        .setLabel('Reopen Ticket')
+        .setLabel('فتح التكت')
         .setStyle(ButtonStyle.Success)
         .setEmoji('🔓'),
       new ButtonBuilder()
         .setCustomId('ticket_delete')
-        .setLabel('Delete Ticket')
+        .setLabel('حذف التكت')
         .setStyle(ButtonStyle.Danger)
         .setEmoji('🗑️')
     );
@@ -467,7 +467,7 @@ export async function claimTicket(channel, claimer) {
     const unclaimRow = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('ticket_unclaim')
-        .setLabel('Unclaim')
+        .setLabel('الغاء الستلام')
         .setStyle(ButtonStyle.Secondary)
         .setEmoji('🔓')
     );
