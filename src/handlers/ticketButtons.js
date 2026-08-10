@@ -25,7 +25,7 @@ async function ensureGuildContext(interaction) {
   }
 
   if (!interaction.replied && !interaction.deferred) {
-    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'This action can only be used in a server.' });
+    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لا يمكن استخدام هذا الإجراء إلا في الخادم.' });
   }
 
   return false;
