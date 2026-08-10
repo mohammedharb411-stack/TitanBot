@@ -25,7 +25,7 @@ async function ensureGuildContext(interaction) {
   }
 
   if (!interaction.replied && !interaction.deferred) {
-    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'This action can only be used in a server.' });
+    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لا يمكن استخدام هذا الإجراء إلا في الخادم.' });
   }
 
   return false;
@@ -44,31 +44,31 @@ async function assertTicketPermission(interaction, client, actionLabel, options 
   } catch (error) {
     if (error.message === 'Timeout') {
       throw createError(
-        'Ticket permission timeout',
+        'انتهت مهلة إذن التذكرة',
         ErrorTypes.RATE_LIMIT,
-        'The permission check took too long. Please try again.'
+        'استغرقت عملية التحقق من الأذونات وقتاً طويلاً. يرجى المحاولة مرة أخرى.'
       );
     }
     throw createError(
-      'Ticket permission check failed',
+      'فشل التحقق من أذونات التذكرة',
       ErrorTypes.UNKNOWN,
-      `Failed to check permissions: ${error.message}`
+      `فشل التحقق من الأذونات: ${error.message}`
     );
   }
 
   if (!context.ticketData) {
     throw createError(
-      'Not a ticket channel',
+      'ليست قناة لبيع التذاكر',
       ErrorTypes.VALIDATION,
-      'This action can only be used in a valid ticket channel.'
+      'لا يمكن استخدام هذا الإجراء إلا في قناة تذاكر صالحة.'
     );
   }
 
   const allowed = allowTicketCreator ? context.canCloseTicket : context.canManageTicket;
   if (!allowed) {
     const permissionMessage = allowTicketCreator
-      ? 'You must have **Manage Channels**, the configured **Ticket Staff Role**, or be the **ticket creator**.'
-      : 'You must have **Manage Channels** or the configured **Ticket Staff Role**.';
+      ? 'يجب أن يكون لديك **إدارة القنوات**، أو **دور موظفي التذاكر** المُكوّن، أو أن تكون **منشئ التذاكر**.'
+      : 'يجب أن يكون لديك **إدارة القنوات** أو **دور موظفي التذاكر** المُكوّن.';
     throw createError(
       'Ticket permission denied',
       ErrorTypes.PERMISSION,
@@ -85,17 +85,17 @@ async function ensureTicketPermission(interaction, client, actionLabel, options 
   const context = await getTicketPermissionContext({ client, interaction });
 
   if (!context.ticketData) {
-    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'This action can only be used in a valid ticket channel.' });
+    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لا يمكن استخدام هذا الإجراء إلا في قناة تذاكر صالحة.' });
     return null;
   }
 
   const allowed = allowTicketCreator ? context.canCloseTicket : context.canManageTicket;
   if (!allowed) {
     const permissionMessage = allowTicketCreator
-      ? 'You must have **Manage Channels**, the configured **Ticket Staff Role**, or be the **ticket creator**.'
-      : 'You must have **Manage Channels** or the configured **Ticket Staff Role**.';
+      ? 'يجب أن يكون لديك **إدارة القنوات**، أو **دور موظفي التذاكر** المُكوّن، أو أن تكون **منشئ التذاكر**.'
+      : 'يجب أن يكون لديك **إدارة القنوات** أو **دور موظفي التذاكر** المُكوّن.';
 
-    await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: `${permissionMessage}\n\nYou cannot ${actionLabel}.` });
+    await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: `${permissionMessage}\n\nلا يمكنك ${actionLabel}.` });
     return null;
   }
 
@@ -122,18 +122,18 @@ const createTicketHandler = {
       const currentTicketCount = await getUserTicketCount(interaction.guildId, interaction.user.id);
       
       if (currentTicketCount >= maxTicketsPerUser) {
-        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `You have reached the maximum number of open tickets (${maxTicketsPerUser}).\n\nPlease close your existing tickets before creating a new one.\n\n**Current Tickets:** ${currentTicketCount}/${maxTicketsPerUser}` });
+        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `لقد وصلت إلى الحد الأقصى لعدد التذاكر المفتوحة (${maxTicketsPerUser}).\n\nيرجى إغلاق تذاكرك الحالية قبل إنشاء تذكرة جديدة.\n\n**التذاكر الحالية:** ${currentTicketCount}/${maxTicketsPerUser}` });
       }
       
       const modal = new ModalBuilder()
         .setCustomId('create_ticket_modal')
-        .setTitle('Create a Ticket');
+        .setTitle('إنشاء تذكرة');
 
       const reasonInput = new TextInputBuilder()
-        .setCustomId('reason')
-        .setLabel('Why are you creating this ticket?')
+        .setCustomId('سبب')
+        .setLabel('لماذا تقوم بإنشاء هذه التذكرة؟')
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Describe your issue...')
+        .setPlaceholder('شو مشكلتك؟؟...')
         .setRequired(true)
         .setMaxLength(1000);
 
@@ -142,9 +142,9 @@ const createTicketHandler = {
 
       await interaction.showModal(modal);
     } catch (error) {
-      logger.error('Error creating ticket modal:', error);
+      logger.error('حدث خطأ أثناء إنشاء نموذج التذكرة:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Could not open ticket creation form.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إنشاء التذكرة.' });
       }
     }
   }
@@ -171,12 +171,12 @@ const createTicketModalHandler = {
       );
       await interaction.editReply({
         embeds: [successEmbed(
-          'Ticket Created',
-          `Your ticket has been created in ${channel}!`
+          'تم إنشاء التذكرة',
+          `تم إنشاء تذكرتك في ${channel}!`
         )]
       });
     } catch (error) {
-      await handleInteractionError(interaction, error, { type: 'button', handler: 'ticket', customId: interaction.customId });
+      await handleInteractionError(interaction, error, { type: 'زر', handler: 'تذكرة', customId: interaction.customId });
     }
   }
 };
@@ -187,17 +187,17 @@ const closeTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'close this ticket', { allowTicketCreator: true }, 2000);
+      await assertTicketPermission(interaction, client, 'أغلق هذه التذكرة', { allowTicketCreator: true }, 2000);
 
       const modal = new ModalBuilder()
         .setCustomId('ticket_close_modal')
-        .setTitle('Close Ticket');
+        .setTitle('إغلاق التذكرة');
 
       const reasonInput = new TextInputBuilder()
         .setCustomId('reason')
         .setLabel('Reason for closing (optional)')
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Add an optional reason for closing this ticket...')
+        .setPlaceholder('أضف سببًا اختياريًا لإغلاق هذه التذكرة...')
         .setRequired(false)
         .setMaxLength(1000);
 
@@ -206,10 +206,10 @@ const closeTicketHandler = {
 
       await interaction.showModal(modal);
     } catch (error) {
-      logger.error('Error closing ticket:', error);
+      logger.error('حدث خطأ في إغلاق التذكرة:', error);
 
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Could not open ticket close form.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إغلاق التذكرة.' });
       }
     }
   }
@@ -221,22 +221,22 @@ const closeTicketModalHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'close this ticket', { allowTicketCreator: true }, 2000);
+      await assertTicketPermission(interaction, client, 'أغلق هذه التذكرة', { allowTicketCreator: true }, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
 
       const providedReason = interaction.fields.getTextInputValue('reason')?.trim();
-      const reason = providedReason || 'Closed via ticket button without a specific reason.';
+      const reason = providedReason || 'تم إغلاق الطلب عبر زر التذاكر دون سبب محدد.';
 
       await closeTicket(interaction.channel, interaction.user, reason);
-      await interaction.editReply({ embeds: [successEmbed('Ticket Closed', 'This ticket has been closed.')] });
+      await interaction.editReply({ embeds: [successEmbed('تم إغلاق التذكرة', 'تم إغلاق هذه التذكرة.')] });
     } catch (error) {
-      logger.error('Error submitting close ticket modal:', error);
+      logger.error('حدث خطأ أثناء إرسال نموذج إغلاق التذكرة:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while closing the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التذكرة.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while closing the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التذكرة.' });
       }
     }
   }
@@ -256,11 +256,11 @@ const claimTicketHandler = {
       await claimTicket(interaction.channel, interaction.user);
       await interaction.editReply({ embeds: [successEmbed('تم استلام التكت', 'لقد قمت باستلام هذه التكت.')] });
     } catch (error) {
-      logger.error('Error claiming ticket:', error);
+      logger.error('خطأ في استلام التذكرة:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while claiming the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء استلام التكت.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while claiming the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء استلام التكت.' });
       }
     }
   }
@@ -272,25 +272,25 @@ const priorityTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'change ticket priority', {}, 2000);
+      await assertTicketPermission(interaction, client, 'تغيير أولوية التكت', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
       
       const priority = args?.[0];
       if (!priority) {
-        await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'A priority value is required.' });
+        await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'يلزم تحديد قيمة الأولوية.' });
         return;
       }
 
       await updateTicketPriority(interaction.channel, priority, interaction.user);
-      await interaction.editReply({ embeds: [successEmbed('Priority Updated', `Ticket priority set to **${priority.toUpperCase()}**.`)] });
+      await interaction.editReply({ embeds: [successEmbed('تم تحديث الأولوية', `تم تحديد أولوية التكت إلى **${priority.toUpperCase()}**.`)] });
     } catch (error) {
-      logger.error('Error updating ticket priority:', error);
+      logger.error('حدث خطأ أثناء تحديث أولوية التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء تحديث الأولوية.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء تحديث الأولوية.' });
       }
     }
   }
@@ -311,7 +311,7 @@ const pinTicketHandler = {
       const category = channel.parent;
 
       if (!category) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'هذه التذكرة ليست ضمن أي فئة.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'هذه التكت ليست ضمن أي فئة.' });
         return;
       }
 
