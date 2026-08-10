@@ -39,7 +39,7 @@ function parseArgs(argv) {
 function assertEnv(name) {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
+    throw new Error(`مفقود مطلوب environment variable: ${name}`);
   }
   return value;
 }
@@ -52,7 +52,7 @@ function ensureCommand(command) {
   });
 
   if (result.status !== 0) {
-    throw new Error(`${command} is required but was not found in PATH.`);
+    throw new Error(`${command} هو مطلوب but was غير موجود في PATH.`);
   }
 }
 
