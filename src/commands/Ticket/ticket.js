@@ -104,12 +104,12 @@ export default {
                 PermissionFlagsBits.ManageChannels,
             )
         ) {
-            logger.warn('تم رفض إذن استخدام أمر التكت', {
+            logger.warn('Ticket command permission denied', {
                 userId: interaction.user.id,
                 guildId: interaction.guildId,
                 commandName: 'ticket'
             });
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'أنت بحاجة إلى إذن "إدارة القنوات" للقيام بهذا الإجراء.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the `Manage Channels` permission for this action.' });
         }
 
         const subcommand = interaction.options.getSubcommand();
@@ -121,7 +121,7 @@ export default {
         if (subcommand === "setup") {
             const existingConfig = await getGuildConfig(client, interaction.guildId);
             if (existingConfig?.ticketPanelChannelId) {
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `يحتوي هذا الخادم بالفعل على نظام تكت مُعدّ (لوحة التحكم في <#${existingConfig.ticketPanelChannelId}>).\n\nيدعم كل خادم نظام تكت واحد فقط. استخدم لوحة تحكم التكت لتعديل أو تحديث الإعداد الحالي، أو اختر "حذف النظام" من لوحة التحكم لإزالته والبدء من جديد.` });
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `This server already has a ticket system set up (panel in <#${existingConfig.ticketPanelChannelId}>).\n\nOnly one ticket system is supported per server. Use \`/ticket dashboard\` to edit or update the existing setup, or select **Delete System** from the dashboard to remove it and start fresh.` });
             }
 
             const panelChannel =
@@ -129,15 +129,15 @@ export default {
             const categoryChannel = interaction.options.getChannel("category");
             const closedCategoryChannel = interaction.options.getChannel("closed_category");
             const staffRole = interaction.options.getRole("staff_role");
-const panelMessage = interaction.options.getString("panel_message") || "انقر على الزر أدناه لإنشاء تكت دعم.";
+const panelMessage = interaction.options.getString("panel_message") || "Click the button below to create a support ticket.";
             const buttonLabel =
                 interaction.options.getString("button_label") ||
-"إنشاء تكت";
+"Create Ticket";
             const maxTicketsPerUser = interaction.options.getInteger("max_tickets_per_user") || 3;
 const dmOnClose = interaction.options.getBoolean("dm_on_close") !== false;
 
             const setupEmbed = createEmbed({ 
-                title: "فتح التكت من هنا", 
+                title: "Support Tickets", 
 description: panelMessage,
                 color: getColor('info')
             });
@@ -169,7 +169,7 @@ description: panelMessage,
                     currentConfig.dmOnClose = dmOnClose;
 
                     await setGuildConfig(client, interaction.guildId, currentConfig);
-                    logger.info('تم حفظ إعدادات التكت', {
+                    logger.info('Ticket configuration saved', {
                         guildId: interaction.guildId,
                         categoryId: categoryChannel?.id,
                         closedCategoryId: closedCategoryChannel?.id,
@@ -178,39 +178,39 @@ description: panelMessage,
                         dmOnClose: dmOnClose,
                     });
                 } else {
-                    logger.error('إعداد التكت: قاعدة البيانات غير متاحة، تم إرسال اللوحة ولكن لم يتم حفظ الإعدادات', {
+                    logger.error('Ticket setup: database unavailable, panel sent but configuration was NOT saved', {
                         guildId: interaction.guildId,
                     });
                 }
 
-                let successMessage = `تم إرسال لوحة إنشاء التكت إلى ${panelChannel}.`;
+                let successMessage = `The ticket creation panel has been sent to ${panelChannel}.`;
                 
                 if (categoryChannel) {
-                    successMessage += `سيتم إنشاء تكت جديدة في **${categoryChannel.name}** فئة.`;
+                    successMessage += `New tickets will be created in the **${categoryChannel.name}** category.`;
                 } else {
-                    successMessage += 'سيتم إنشاء التكت الجديدة في قسم "التكت" الجديد.فئة.';
+                    successMessage += 'New tickets will be created in a new "Tickets" category.';
                 }
                 
                 if (closedCategoryChannel) {
-                    successMessage += `سيتم نقل التكت المغلقة إلى**${closedCategoryChannel.name}**.`;
+                    successMessage += `Closed tickets will be moved to **${closedCategoryChannel.name}**.`;
                 }
                 
                 if (staffRole) {
-                    successMessage += `**${staffRole.name}** سيتمكن هذا الدور من الوصول إلى التكت.`;
+                    successMessage += `**${staffRole.name}** role will have access to tickets.`;
                 }
                 
-                successMessage += `\n\n**الحد الأقصى التكت لكل مستخدم:** ${maxTicketsPerUser}\n**رسالة خاصة عند الإغلاق:** ${dmOnClose ? 'مُفعّل' : 'عاجز'}`;
+                successMessage += `\n\n**Max Tickets Per User:** ${maxTicketsPerUser}\n**DM on Close:** ${dmOnClose ? 'Enabled' : 'Disabled'}`;
 
                 await InteractionHelper.safeEditReply(interaction, {
                     embeds: [
                         successEmbed(
-                            "إعداد لوحة التكت",
+                            "Ticket Panel Set Up",
                             successMessage,
                         ),
                     ],
                 });
 
-                logger.info('تم الانتهاء من إعداد لوحة التكت', {
+                logger.info('Ticket panel setup completed', {
                     userId: interaction.user.id,
                     userTag: interaction.user.tag,
                     guildId: interaction.guildId,
@@ -224,56 +224,56 @@ description: panelMessage,
                 });
 
                 const logEmbed = createEmbed({
-                    title: "إعداد نظام التكت (سجل التكوين)",
-                    description: `تم إنشاء لوحة التكت في ${panelChannel} بواسطة ${interaction.user}.`,
+                    title: "Ticket System Setup (Configuration Log)",
+                    description: `The ticket panel was set up in ${panelChannel} by ${interaction.user}.`,
                     color: getColor('warning')
                 })
                     .addFields(
                         {
-                            name: "قناة اللوحةl",
+                            name: "Panel Channel",
                             value: panelChannel.toString(),
                             inline: true,
                         },
                         {
-                            name: "فئة التكت",
+                            name: "Ticket Category",
                             value: categoryChannel
                                 ? categoryChannel.toString()
-                                : "لم يتم تحديد أي شيء.",
+                                : "None specified.",
                             inline: true,
                         },
                         {
-                            name: "فئة مغلقة",
+                            name: "Closed Category",
                             value: closedCategoryChannel
                                 ? closedCategoryChannel.toString()
-                                : "لم يتم تحديد أي شيء.",
+                                : "None specified.",
                             inline: true,
                         },
                         {
-                            name: "دور الموظف",
+                            name: "Staff Role",
                             value: staffRole
                                 ? staffRole.toString()
-                                : "لم يتم تحديد أي شيء.",
+                                : "None specified.",
                             inline: true,
                         },
                         {
-                            name: "الحد الأقصى التكت لكل مستخدم",
+                            name: "Max Tickets Per User",
                             value: maxTicketsPerUser.toString(),
                             inline: true,
                         },
                         {
-                            name: "رسالة خاصة عند الإغلاق",
-                            value: dmOnClose ? 'مُفعّل' : 'عاجز',
+                            name: "DM on Close",
+                            value: dmOnClose ? 'Enabled' : 'Disabled',
                             inline: true,
                         },
                         {
-                            name: "المشرف",
+                            name: "Moderator",
                             value: `${interaction.user.tag} (${interaction.user.id})`,
                             inline: false,
                         },
                     );
 
             } catch (error) {
-                logger.error('خطأ في إعداد التكت', {
+                logger.error('Ticket setup error', {
                     error: error.message,
                     stack: error.stack,
                     userId: interaction.user.id,
@@ -281,8 +281,8 @@ description: panelMessage,
                     commandName: 'ticket_setup'
                 });
                 if (interaction.deferred || interaction.replied) {
-                    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر إرسال لوحة التكت أو حفظ الإعدادات. يرجى مراجعة البوت.\'s الأذونات (وخاصة القدرة على إرسال الرسائل في القناة المستهدفة) واتصال قاعدة البيانات.' }).catch(err => {
-                        logger.error('فشل إرسال رد الخطأ', {
+                    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Could not send the ticket panel or save configuration. Check the bot\'s permissions (especially the ability to send messages in the target channel) and database connection.' }).catch(err => {
+                        logger.error('Failed to send error reply', {
                             error: err.message,
                             guildId: interaction.guildId
                         });
