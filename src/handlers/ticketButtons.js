@@ -171,12 +171,12 @@ const createTicketModalHandler = {
       );
       await interaction.editReply({
         embeds: [successEmbed(
-          'Ticket Created',
-          `Your ticket has been created in ${channel}!`
+          'تم إنشاء التذكرة',
+          `تم إنشاء تذكرتك في ${channel}!`
         )]
       });
     } catch (error) {
-      await handleInteractionError(interaction, error, { type: 'button', handler: 'ticket', customId: interaction.customId });
+      await handleInteractionError(interaction, error, { type: 'زر', handler: 'تذكرة', customId: interaction.customId });
     }
   }
 };
@@ -187,17 +187,17 @@ const closeTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'close this ticket', { allowTicketCreator: true }, 2000);
+      await assertTicketPermission(interaction, client, 'أغلق هذه التذكرة', { allowTicketCreator: true }, 2000);
 
       const modal = new ModalBuilder()
         .setCustomId('ticket_close_modal')
-        .setTitle('Close Ticket');
+        .setTitle('إغلاق التذكرة');
 
       const reasonInput = new TextInputBuilder()
         .setCustomId('reason')
-        .setLabel('Reason for closing (optional)')
+        .setLabel('سبب الإغلاق (اختياري)')
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Add an optional reason for closing this ticket...')
+        .setPlaceholder('أضف سببًا اختياريًا لإغلاق هذه التذكرة...')
         .setRequired(false)
         .setMaxLength(1000);
 
@@ -206,10 +206,10 @@ const closeTicketHandler = {
 
       await interaction.showModal(modal);
     } catch (error) {
-      logger.error('Error closing ticket:', error);
+      logger.error('حدث خطأ في إغلاق التذكرة:', error);
 
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Could not open ticket close form.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إغلاق التذكرة.' });
       }
     }
   }
