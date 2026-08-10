@@ -10,11 +10,11 @@ import { updateTicketPriority } from '../../services/ticket.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("priority")
-        .setDescription("يحدد مستوى الأولوية لتكت الدعم الحالية.")
+        .setDescription("Sets the priority level for the current support ticket.")
         .addStringOption((option) =>
             option
                 .setName("level")
-                .setDescription("مستوى أولوية التكت.")
+                .setDescription("The priority level for the ticket.")
                 .setRequired(true)
                 .addChoices(
                     { name: "Urgent", value: "urgent" },
@@ -35,11 +35,11 @@ export default {
 
         const permissionContext = await getTicketPermissionContext({ client, interaction });
         if (!permissionContext.ticketData) {
-            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'لا يمكن استخدام هذا الأمر إلا في قناة تكت صالحة.' });
+            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'This command can only be used in a valid ticket channel.' });
         }
 
         if (!permissionContext.canManageTicket) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'تحتاج إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن لتغيير أولوية التكت.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the `Manage Channels` permission or the configured `Ticket Staff Role` to change ticket priority.' });
         }
 
         const priorityLevel = interaction.options.getString("level");
@@ -48,13 +48,13 @@ export default {
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [
                 successEmbed(
-                    "تم تحديث الأولوية",
-                    `تم تحديد أولوية التكت إلى **${priorityLevel.toUpperCase()}**.`,
+                    "Priority Updated",
+                    `Ticket priority set to **${priorityLevel.toUpperCase()}**.`,
                 ),
             ],
         });
 
-        logger.info('تم تحديث أولوية التكت بنجاح', {
+        logger.info('Ticket priority updated successfully', {
             userId: interaction.user.id,
             userTag: interaction.user.tag,
             channelId: interaction.channel.id,
