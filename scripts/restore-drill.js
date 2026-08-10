@@ -47,7 +47,7 @@ function ensureCommand(command) {
   });
 
   if (result.status !== 0) {
-    throw new Error(`${command} is required but was not found in PATH.`);
+    throw new Error(`${command} هو مطلوب but was غير موجود في PATH.`);
   }
 }
 
@@ -102,7 +102,7 @@ async function run() {
   const args = parseArgs(process.argv.slice(2));
   const sourceDatabaseUrl = process.env.POSTGRES_URL;
   if (!sourceDatabaseUrl) {
-    throw new Error('Missing required environment variable: POSTGRES_URL');
+    throw new Error('مفقود مطلوب environment variable: POSTGRES_URL');
   }
 
   const keepDrillDatabase = args['keep-db'] === true || args['keep-db'] === 'true';
@@ -165,11 +165,11 @@ async function run() {
       );
 
       if (tableCount.rows[0]?.value <= 0) {
-        throw new Error('Restore drill verification failed: no public tables restored.');
+        throw new Error('Restore drill verification فشل: لا عام tables restored.');
       }
 
       if (migrationTableCount.rows[0]?.value <= 0) {
-        throw new Error('Restore drill verification failed: schema_migrations table missing.');
+        throw new Error('Restore drill verification فشل: schema_migrations table مفقود.');
       }
     } finally {
       await verifyPool.end();
