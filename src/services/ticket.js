@@ -459,8 +459,8 @@ export async function claimTicket(channel, claimer) {
     }
     
     const claimEmbed = createEmbed({
-      title: 'Ticket Claimed',
-      description: `🎉 ${claimer} has claimed this ticket!`,
+      title: 'تم استلام التكت',
+      description: `🎉 ${claimer} لقد استلم هذه التكت!`,
       color: '#2ecc71'
     });
     
