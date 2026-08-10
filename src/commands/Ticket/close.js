@@ -9,12 +9,12 @@ import { closeTicket } from '../../services/ticket.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("close")
-        .setDescription("إغلاق التذكرة الحالية.")
+        .setDescription("Closes the current ticket.")
         .setDMPermission(false)
         .addStringOption((option) =>
             option
                 .setName("reason")
-                .setDescription("سبب إغلاق التذكرة.")
+                .setDescription("The reason for closing the ticket.")
                 .setRequired(false),
         ),
 
@@ -26,24 +26,24 @@ export default {
 
         const permissionContext = await getTicketPermissionContext({ client, interaction });
         if (!permissionContext.ticketData) {
-            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'لا يمكن استخدام هذا الأمر إلا في قناة تذاكر صالحة.' });
+            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'This command can only be used in a valid ticket channel.' });
         }
 
         if (!permissionContext.canCloseTicket) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'أنت بحاجة إلى إذن "إدارة القنوات"، أو دور "موظف التذاكر" المُكوّن، أو أن تكون منشئ التذكرة لإغلاق هذه التذكرة.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the `Manage Channels` permission, the configured `Ticket Staff Role`, or be the ticket creator to close this ticket.' });
         }
 
         const reason =
             interaction.options?.getString("reason") ||
-            "تم إغلاقها عبر أمر دون سبب محدد.";
+            "Closed via command without a specific reason.";
 
         await closeTicket(interaction.channel, interaction.user, reason);
 
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [
                 successEmbed(
-                    "تم إغلاق التذكرة!",
-                    "تم إغلاق هذه التذكرة بنجاح.",
+                    "Ticket Closed!",
+                    "This ticket has been closed successfully.",
                 ),
             ],
         });
