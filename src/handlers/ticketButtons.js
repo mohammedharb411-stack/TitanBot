@@ -248,13 +248,13 @@ const claimTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'claim tickets', {}, 2000);
+      await assertTicketPermission(interaction, client, 'استلام التكت', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
       
       await claimTicket(interaction.channel, interaction.user);
-      await interaction.editReply({ embeds: [successEmbed('Ticket Claimed', 'You have claimed this ticket.')] });
+      await interaction.editReply({ embeds: [successEmbed('تم استلام التكت', 'لقد قمت باستلام هذه التكت.')] });
     } catch (error) {
       logger.error('Error claiming ticket:', error);
       if (!interaction.replied && !interaction.deferred) {
