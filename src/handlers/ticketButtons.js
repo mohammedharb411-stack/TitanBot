@@ -127,13 +127,13 @@ const createTicketHandler = {
       
       const modal = new ModalBuilder()
         .setCustomId('create_ticket_modal')
-        .setTitle('Create a Ticket');
+        .setTitle('إنشاء تذكرة');
 
       const reasonInput = new TextInputBuilder()
         .setCustomId('reason')
-        .setLabel('Why are you creating this ticket?')
+        .setLabel('لماذا تقوم بإنشاء هذه التذكرة؟')
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('Describe your issue...')
+        .setPlaceholder('شو مشكلتك ؟...')
         .setRequired(true)
         .setMaxLength(1000);
 
@@ -142,9 +142,9 @@ const createTicketHandler = {
 
       await interaction.showModal(modal);
     } catch (error) {
-      logger.error('Error creating ticket modal:', error);
+      logger.error('حدث خطأ أثناء إنشاء نموذج التذكرة:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Could not open ticket creation form.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إنشاء التذكرة.' });
       }
     }
   }
