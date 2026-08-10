@@ -48,7 +48,7 @@ export default {
             ],
         });
 
-        logger.info('تم إغلاق التذكرة بنجاح', {
+        logger.info('Ticket closed successfully', {
             userId: interaction.user.id,
             userTag: interaction.user.tag,
             channelId: interaction.channel.id,
