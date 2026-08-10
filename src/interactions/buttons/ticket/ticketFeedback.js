@@ -6,11 +6,11 @@ import { logTicketFeedback } from '../../../utils/ticket/ticketLogging.js';
 import { InteractionHelper } from '../../../utils/interactionHelper.js';
 
 const STAR_LABELS = {
-    '1': '⭐ 1 — Poor',
-    '2': '⭐ 2 — Below Average',
-    '3': '⭐ 3 — Average',
-    '4': '⭐ 4 — Good',
-    '5': '⭐ 5 — Excellent',
+    '1': '⭐ 1 — فقير',
+    '2': '⭐ 2 — أقل من المتوسط',
+    '3': '⭐ 3 — المتوسط',
+    '4': '⭐ 4 — جيد',
+    '5': '⭐ 5 — ممتاز',
 };
 
 const feedbackHandler = {
@@ -24,8 +24,8 @@ const feedbackHandler = {
             await InteractionHelper.safeReply(interaction, {
                 embeds: [
                     new EmbedBuilder()
-                        .setTitle('⚠️ Invalid Feedback Link')
-                        .setDescription('This feedback link appears to be malformed.')
+                        .setTitle('⚠️ رابط التعليقات غير صالح')
+                        .setDescription('يبدو أن رابط التعليقات هذا معطوب.')
                         .setColor(getColor('error')),
                 ],
                 components: [],
@@ -36,7 +36,7 @@ const feedbackHandler = {
         try {
             await interaction.deferUpdate();
         } catch (err) {
-            logger.warn('ticketFeedback: interaction expired before deferUpdate', { guildId, channelId, error: err.message });
+            logger.warn('ملاحظات التكت: انتهت صلاحية التفاعل قبل تأجيل التحديث', { guildId, channelId, error: err.message });
             return;
         }
 
@@ -44,15 +44,15 @@ const feedbackHandler = {
         try {
             ticketData = await getTicketData(guildId, channelId);
         } catch (err) {
-            logger.warn('ticketFeedback: failed to load ticket data', { guildId, channelId, error: err.message });
+            logger.warn('ملاحظات التكت: فشل تحميل بيانات التكت', { guildId, channelId, error: err.message });
         }
 
         if (!ticketData) {
             await InteractionHelper.safeEditReply(interaction, {
                 embeds: [
                     new EmbedBuilder()
-                        .setTitle('⚠️ Ticket Not Found')
-                        .setDescription('Could not find the ticket associated with this survey.')
+                        .setTitle('⚠️ لم يتم العثور على التكت')
+                        .setDescription('لم يتم العثور على التكت المرتبطة بهذا الاستطلاع.')
                         .setColor(getColor('error')),
                 ],
                 components: [],
@@ -64,8 +64,8 @@ const feedbackHandler = {
             await InteractionHelper.safeEditReply(interaction, {
                 embeds: [
                     new EmbedBuilder()
-                        .setTitle('❌ Not Allowed')
-                        .setDescription('Only the ticket creator can submit feedback for this ticket.')
+                        .setTitle('❌ غير مسموح')
+                        .setDescription('لا يمكن إلا لمنشئ التكت تقديم ملاحظات بشأن هذه التكت.')
                         .setColor(getColor('error')),
                 ],
                 components: [],
@@ -77,8 +77,8 @@ const feedbackHandler = {
             await InteractionHelper.safeEditReply(interaction, {
                 embeds: [
                     new EmbedBuilder()
-                        .setTitle('✅ Already Submitted')
-                        .setDescription(`You already rated this ticket **${STAR_LABELS[String(ticketData.feedback.rating)]}**.\nThank you for your feedback!`)
+                        .setTitle('✅ تم الإرسال مسبقاً')
+                        .setDescription(`لقد قمت بتقييم هذه التكت بالفعل **${STAR_LABELS[String(ticketData.feedback.rating)]}**.\nشكراً لك على ملاحظاتك!`)
                         .setColor(getColor('success')),
                 ],
                 components: [],
@@ -96,7 +96,7 @@ const feedbackHandler = {
             };
             await saveTicketData(guildId, channelId, ticketData);
         } catch (err) {
-            logger.error('ticketFeedback: failed to save feedback', { guildId, channelId, rating, error: err.message });
+            logger.error('ملاحظات التكت: فشل حفظ الملاحظات', { guildId, channelId, rating, error: err.message });
         }
 
         try {
@@ -109,22 +109,22 @@ const feedbackHandler = {
                 rating,
             });
         } catch (err) {
-            logger.warn('ticketFeedback: failed to send log', { guildId, channelId, error: err.message });
+            logger.warn('ملاحظات التكت: فشل إرسال السجل', { guildId, channelId, error: err.message });
         }
 
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [
                 new EmbedBuilder()
-                    .setTitle('✅ Thanks for your feedback!')
-                    .setDescription(`You rated your support experience **${ratingLabel}**.\n\nYour feedback has been recorded and helps us improve!`)
+                    .setTitle('✅ شكراً لتعليقاتكم!')
+                    .setDescription(`لقد قيّمت تجربة الدعم الخاصة بك **${ratingLabel}**.\n\nتم تسجيل ملاحظاتكم، وهي تساعدنا على التحسين!`)
                     .setColor(getColor('success'))
-                    .setFooter({ text: 'Thank you for using our support system.' })
+                    .setFooter({ text: 'نشكرك على استخدام نظام الدعم الخاص بنا.' })
                     .setTimestamp(),
             ],
             components: [],
         });
 
-        logger.info('Ticket feedback submitted', {
+        logger.info('تم إرسال ملاحظات التكت', {
             guildId,
             channelId,
             userId: interaction.user.id,
@@ -143,8 +143,8 @@ const commentHandler = {
             await interaction.update({
                 embeds: [
                     new EmbedBuilder()
-                        .setTitle('⚠️ Invalid Feedback Link')
-                        .setDescription('This feedback action appears to be malformed.')
+                        .setTitle('⚠️ رابط التعليقات غير صالح')
+                        .setDescription('يبدو أن إجراء التغذية الراجعة هذا معيب.')
                         .setColor(getColor('error')),
                 ],
                 components: [],
@@ -154,13 +154,13 @@ const commentHandler = {
 
         const modal = new ModalBuilder()
             .setCustomId(`ticket_feedback_comment_modal:${guildId}:${channelId}`)
-            .setTitle('Add Ticket Feedback');
+            .setTitle('إضافة تعليق على التكت');
 
         const commentInput = new TextInputBuilder()
             .setCustomId('feedback_comment')
-            .setLabel('Your feedback')
+            .setLabel('ملاحظاتكم')
             .setStyle(TextInputStyle.Paragraph)
-            .setPlaceholder('Share what went well or how we can improve...')
+            .setPlaceholder('شاركنا ما سار على ما يرام أو كيف يمكننا التحسين...')
             .setRequired(true)
             .setMaxLength(1000);
 
@@ -177,8 +177,8 @@ const declineHandler = {
         await interaction.update({
             embeds: [
                 new EmbedBuilder()
-                    .setTitle('👋 No problem!')
-                    .setDescription('You can always reach out again if you need further support.')
+                    .setTitle('👋 لا مشكلة!')
+                    .setDescription('يمكنك دائمًا التواصل معنا مرة أخرى إذا كنت بحاجة إلى مزيد من الدعم.')
                     .setColor(getColor('default')),
             ],
             components: [],
