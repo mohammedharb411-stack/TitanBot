@@ -44,13 +44,13 @@ async function assertTicketPermission(interaction, client, actionLabel, options 
   } catch (error) {
     if (error.message === 'Timeout') {
       throw createError(
-        'انتهت مهلة إذن التذكرة',
+        'انتهت مهلة إذن التكت',
         ErrorTypes.RATE_LIMIT,
         'استغرقت عملية التحقق من الأذونات وقتاً طويلاً. يرجى المحاولة مرة أخرى.'
       );
     }
     throw createError(
-      'فشل التحقق من أذونات التذكرة',
+      'فشل التحقق من أذونات التكت',
       ErrorTypes.UNKNOWN,
       `فشل التحقق من الأذونات: ${error.message}`
     );
@@ -122,16 +122,16 @@ const createTicketHandler = {
       const currentTicketCount = await getUserTicketCount(interaction.guildId, interaction.user.id);
       
       if (currentTicketCount >= maxTicketsPerUser) {
-        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `لقد وصلت إلى الحد الأقصى لعدد التذاكر المفتوحة (${maxTicketsPerUser}).\n\nيرجى إغلاق تذاكرك الحالية قبل إنشاء تذكرة جديدة.\n\n**التذاكر الحالية:** ${currentTicketCount}/${maxTicketsPerUser}` });
+        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `لقد وصلت إلى الحد الأقصى لعدد التذاكر المفتوحة (${maxTicketsPerUser}).\n\nيرجى إغلاق تذاكرك الحالية قبل إنشاء تكت جديدة.\n\n**التذاكر الحالية:** ${currentTicketCount}/${maxTicketsPerUser}` });
       }
       
       const modal = new ModalBuilder()
         .setCustomId('create_ticket_modal')
-        .setTitle('إنشاء تذكرة');
+        .setTitle('إنشاء تكت');
 
       const reasonInput = new TextInputBuilder()
         .setCustomId('سبب')
-        .setLabel('لماذا تقوم بإنشاء هذه التذكرة؟')
+        .setLabel('لماذا تقوم بإنشاء هذه التكت؟')
         .setStyle(TextInputStyle.Paragraph)
         .setPlaceholder('شو مشكلتك؟؟...')
         .setRequired(true)
@@ -142,9 +142,9 @@ const createTicketHandler = {
 
       await interaction.showModal(modal);
     } catch (error) {
-      logger.error('حدث خطأ أثناء إنشاء نموذج التذكرة:', error);
+      logger.error('حدث خطأ أثناء إنشاء نموذج التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إنشاء التذكرة.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إنشاء التكت.' });
       }
     }
   }
@@ -171,12 +171,12 @@ const createTicketModalHandler = {
       );
       await interaction.editReply({
         embeds: [successEmbed(
-          'تم إنشاء التذكرة',
+          'تم إنشاء التكت',
           `تم إنشاء تذكرتك في ${channel}!`
         )]
       });
     } catch (error) {
-      await handleInteractionError(interaction, error, { type: 'زر', handler: 'تذكرة', customId: interaction.customId });
+      await handleInteractionError(interaction, error, { type: 'زر', handler: 'تكت', customId: interaction.customId });
     }
   }
 };
@@ -187,17 +187,17 @@ const closeTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'أغلق هذه التذكرة', { allowTicketCreator: true }, 2000);
+      await assertTicketPermission(interaction, client, 'أغلق هذه التكت', { allowTicketCreator: true }, 2000);
 
       const modal = new ModalBuilder()
         .setCustomId('ticket_close_modal')
-        .setTitle('إغلاق التذكرة');
+        .setTitle('إغلاق التكت');
 
       const reasonInput = new TextInputBuilder()
         .setCustomId('reason')
         .setLabel('Reason for closing (optional)')
         .setStyle(TextInputStyle.Paragraph)
-        .setPlaceholder('أضف سببًا اختياريًا لإغلاق هذه التذكرة...')
+        .setPlaceholder('أضف سببًا اختياريًا لإغلاق هذه التكت...')
         .setRequired(false)
         .setMaxLength(1000);
 
@@ -206,10 +206,10 @@ const closeTicketHandler = {
 
       await interaction.showModal(modal);
     } catch (error) {
-      logger.error('حدث خطأ في إغلاق التذكرة:', error);
+      logger.error('حدث خطأ في إغلاق التكت:', error);
 
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إغلاق التذكرة.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'تعذر فتح نموذج إغلاق التكت.' });
       }
     }
   }
@@ -221,7 +221,7 @@ const closeTicketModalHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'أغلق هذه التذكرة', { allowTicketCreator: true }, 2000);
+      await assertTicketPermission(interaction, client, 'أغلق هذه التكت', { allowTicketCreator: true }, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
@@ -230,13 +230,13 @@ const closeTicketModalHandler = {
       const reason = providedReason || 'تم إغلاق الطلب عبر زر التذاكر دون سبب محدد.';
 
       await closeTicket(interaction.channel, interaction.user, reason);
-      await interaction.editReply({ embeds: [successEmbed('تم إغلاق التذكرة', 'تم إغلاق هذه التذكرة.')] });
+      await interaction.editReply({ embeds: [successEmbed('تم إغلاق التكت', 'تم إغلاق هذه التكت.')] });
     } catch (error) {
-      logger.error('حدث خطأ أثناء إرسال نموذج إغلاق التذكرة:', error);
+      logger.error('حدث خطأ أثناء إرسال نموذج إغلاق التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التذكرة.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التكت.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التذكرة.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التكت.' });
       }
     }
   }
@@ -256,7 +256,7 @@ const claimTicketHandler = {
       await claimTicket(interaction.channel, interaction.user);
       await interaction.editReply({ embeds: [successEmbed('تم استلام التكت', 'لقد قمت باستلام هذه التكت.')] });
     } catch (error) {
-      logger.error('خطأ في استلام التذكرة:', error);
+      logger.error('خطأ في استلام التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
         await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء استلام التكت.' });
       } else if (interaction.deferred) {
@@ -405,7 +405,7 @@ const unclaimTicketHandler = {
       
       const { unclaimTicket } = await import('../services/ticket.js');
       await unclaimTicket(interaction.channel, interaction.member);
-      await interaction.editReply({ embeds: [successEmbed('تذكرة غير مُستلمة', 'لم يتم استلام هذه التكت.')] });
+      await interaction.editReply({ embeds: [successEmbed('تكت غير مُستلمة', 'لم يتم استلام هذه التكت.')] });
     } catch (error) {
       logger.error('خطأ في إلغاء المطالبة بالتكت:', error);
       if (!interaction.replied && !interaction.deferred) {
