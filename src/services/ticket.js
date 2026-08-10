@@ -118,7 +118,7 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
     
     const ticketNumber = await getNextTicketNumber(guild.id);
     
-    let channelName = `ticket-${ticketNumber}`;
+    let channelName = `تكت رقم-${ticketNumber}`;
     
     if (priority !== 'none') {
       const priorityInfo = PRIORITY_MAP[priority];
@@ -683,7 +683,7 @@ ${rows}
 </html>`;
 
     const buffer = Buffer.from(html, 'utf8');
-    const attachment = new AttachmentBuilder(buffer, { name: `ticket-${channel.id}.html` });
+    const attachment = new AttachmentBuilder(buffer, { name: `تكت رقم-${channel.id}.html` });
 
     logger.info('✅ Successfully generated transcript', {
       channelId: channel.id,
