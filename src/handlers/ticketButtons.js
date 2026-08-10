@@ -221,22 +221,22 @@ const closeTicketModalHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'close this ticket', { allowTicketCreator: true }, 2000);
+      await assertTicketPermission(interaction, client, 'أغلق هذه التذكرة', { allowTicketCreator: true }, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
 
       const providedReason = interaction.fields.getTextInputValue('reason')?.trim();
-      const reason = providedReason || 'Closed via ticket button without a specific reason.';
+      const reason = providedReason || 'تم إغلاق الطلب عبر زر التذاكر دون سبب محدد.';
 
       await closeTicket(interaction.channel, interaction.user, reason);
-      await interaction.editReply({ embeds: [successEmbed('Ticket Closed', 'This ticket has been closed.')] });
+      await interaction.editReply({ embeds: [successEmbed('تم إغلاق التذكرة', 'تم إغلاق هذه التذكرة.')] });
     } catch (error) {
-      logger.error('Error submitting close ticket modal:', error);
+      logger.error('حدث خطأ أثناء إرسال نموذج إغلاق التذكرة:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while closing the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التذكرة.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while closing the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إغلاق التذكرة.' });
       }
     }
   }
@@ -256,11 +256,11 @@ const claimTicketHandler = {
       await claimTicket(interaction.channel, interaction.user);
       await interaction.editReply({ embeds: [successEmbed('تم استلام التكت', 'لقد قمت باستلام هذه التكت.')] });
     } catch (error) {
-      logger.error('Error claiming ticket:', error);
+      logger.error('خطأ في استلام التذكرة:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while claiming the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء استلام التكت.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while claiming the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء استلام التكت.' });
       }
     }
   }
@@ -272,25 +272,25 @@ const priorityTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'change ticket priority', {}, 2000);
+      await assertTicketPermission(interaction, client, 'تغيير أولوية التكت', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
       
       const priority = args?.[0];
       if (!priority) {
-        await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'A priority value is required.' });
+        await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'يلزم تحديد قيمة الأولوية.' });
         return;
       }
 
       await updateTicketPriority(interaction.channel, priority, interaction.user);
-      await interaction.editReply({ embeds: [successEmbed('Priority Updated', `Ticket priority set to **${priority.toUpperCase()}**.`)] });
+      await interaction.editReply({ embeds: [successEmbed('تم تحديث الأولوية', `تم تحديد أولوية التكت إلى **${priority.toUpperCase()}**.`)] });
     } catch (error) {
-      logger.error('Error updating ticket priority:', error);
+      logger.error('حدث خطأ أثناء تحديث أولوية التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء تحديث الأولوية.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while updating the priority.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء تحديث الأولوية.' });
       }
     }
   }
@@ -302,7 +302,7 @@ const pinTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'تذاكر الدبوس', {}, 2000);
+      await assertTicketPermission(interaction, client, 'تكت تثبيت', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
@@ -311,7 +311,7 @@ const pinTicketHandler = {
       const category = channel.parent;
 
       if (!category) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'هذه التذكرة ليست ضمن أي فئة.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'هذه التكت ليست ضمن أي فئة.' });
         return;
       }
 
