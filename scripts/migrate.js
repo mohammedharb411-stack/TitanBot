@@ -8,10 +8,10 @@ import { EXPECTED_SCHEMA_LABEL, EXPECTED_SCHEMA_VERSION } from '../src/config/da
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
-// Imported after dotenv.config so resolveSslConfig sees the loaded env vars.
+// Imported after dotenv.الإعدادات so resolveSslConfig sees ال loaded env vars.
 const { resolveSslConfig } = await import('../src/config/database/postgres.js');
-// The schema is the single source of truth shared with the runtime auto-create
-// path (src/utils/postgresDatabase.js), so this script can never diverge from it.
+// ال schema هو ال single source من truth shared مع ال runtime auto-إنشاء
+// path (src/utils/postgresDatabase.js), so this script يمكن never diverge من it.
 const {
   tableStatements,
   indexStatements,
@@ -31,7 +31,7 @@ const migrationTable = process.env.POSTGRES_MIGRATION_TABLE || 'schema_migration
 const migrationTablePattern = /^[a-z_][a-z0-9_]*$/;
 
 if (!migrationTablePattern.test(migrationTable)) {
-  throw new Error(`Invalid migration table name: ${migrationTable}`);
+  throw new Error(`غير صالح migration table الاسم: ${migrationTable}`);
 }
 
 const ensureMigrationLedger = async (client) => {
