@@ -111,7 +111,7 @@ const createTicketHandler = {
       const rateLimitKey = `${interaction.user.id}:create_ticket`;
       const allowed = await checkRateLimit(rateLimitKey, 3, 60000);
       if (!allowed) {
-        await replyUserError(interaction, { type: ErrorTypes.RATE_LIMIT, message: 'You are creating tickets too quickly. Please wait a minute and try again.' });
+        await replyUserError(interaction, { type: ErrorTypes.RATE_LIMIT, message: 'أنت تقوم بإنشاء تكت بسرعة كبيرة. يرجى الانتظار دقيقة ثم المحاولة مرة أخرى.' });
         return;
       }
 
@@ -248,13 +248,13 @@ const claimTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'claim tickets', {}, 2000);
+      await assertTicketPermission(interaction, client, 'استلام التكت', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
       
       await claimTicket(interaction.channel, interaction.user);
-      await interaction.editReply({ embeds: [successEmbed('Ticket Claimed', 'You have claimed this ticket.')] });
+      await interaction.editReply({ embeds: [successEmbed('تم استلام التكت', 'لقد قمت باستلام هذه التكت.')] });
     } catch (error) {
       logger.error('Error claiming ticket:', error);
       if (!interaction.replied && !interaction.deferred) {
@@ -398,20 +398,20 @@ const unclaimTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'unclaim tickets', {}, 2000);
+      await assertTicketPermission(interaction, client, 'إلغاء استلام التكت', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
       
       const { unclaimTicket } = await import('../services/ticket.js');
       await unclaimTicket(interaction.channel, interaction.member);
-      await interaction.editReply({ embeds: [successEmbed('Ticket Unclaimed', 'This ticket has been unclaimed.')] });
+      await interaction.editReply({ embeds: [successEmbed('تذكرة غير مُستلمة', 'لم يتم استلام هذه التكت.')] });
     } catch (error) {
-      logger.error('Error unclaiming ticket:', error);
+      logger.error('خطأ في إلغاء المطالبة بالتكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while unclaiming the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إلغاء المطالبة بالتكت.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while unclaiming the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إلغاء المطالبة بالتكت.' });
       }
     }
   }
@@ -423,24 +423,24 @@ const reopenTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'reopen tickets', {}, 2000);
+      await assertTicketPermission(interaction, client, 'تكت إعادة فتح', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
       
       const { reopenTicket } = await import('../services/ticket.js');
       const { movedToOpenCategory, openCategoryMoveFailed } = await reopenTicket(interaction.channel, interaction.member);
-      let reopenMessage = 'This ticket has been reopened.';
+      let reopenMessage = 'تم إعادة فتح هذه التكت.';
       if (openCategoryMoveFailed) {
-        reopenMessage += ' Note: Could not move the channel back to the open tickets category.';
+        reopenMessage += ' ملاحظة: تعذر إعادة القناة إلى فئة التكت المفتوحة.';
       }
-      await interaction.editReply({ embeds: [successEmbed('Ticket Reopened', reopenMessage)] });
+      await interaction.editReply({ embeds: [successEmbed('تم إعادة فتح التكت', reopenMessage)] });
     } catch (error) {
-      logger.error('Error reopening ticket:', error);
+      logger.error('خطأ في إعادة فتح التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while reopening the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إعادة فتح التكت.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while reopening the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إعادة فتح التكت.' });
       }
     }
   }
@@ -452,20 +452,20 @@ const deleteTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'delete tickets', {}, 2000);
+      await assertTicketPermission(interaction, client, 'حذف التكت', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
       
       const { deleteTicket } = await import('../services/ticket.js');
       await deleteTicket(interaction.channel, interaction.member);
-      await interaction.editReply({ embeds: [successEmbed('Ticket Deleted', 'This ticket will be deleted shortly.')] });
+      await interaction.editReply({ embeds: [successEmbed('تم حذف التكت', 'سيتم حذف هذه التكت قريبًا.')] });
     } catch (error) {
-      logger.error('Error deleting ticket:', error);
+      logger.error('خطأ في حذف التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while deleting the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء حذف التكت.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while deleting the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء حذف التكت.' });
       }
     }
   }
