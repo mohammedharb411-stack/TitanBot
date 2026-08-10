@@ -28,8 +28,8 @@ function ticketUserError(message, userMessage, type = ErrorTypes.VALIDATION, con
 function requireTicket(ticketData, channel) {
   if (!ticketData) {
     ticketUserError(
-      'Not a ticket channel',
-      'This is not a ticket channel.',
+      'ليست قناة لبيع التذاكر',
+      'هذه ليست قناة لبيع التذاكر.',
       ErrorTypes.VALIDATION,
       { channelId: channel?.id, guildId: channel?.guild?.id }
     );
@@ -41,7 +41,7 @@ function rethrowTicketError(error, operation, userMessage, context = {}) {
   throw ensureTypedServiceError(error, {
     service: TICKET_SERVICE,
     operation,
-    message: `Ticket operation failed: ${operation}`,
+    message: `فشلت عملية إصدار التذاكر: ${operation}`,
     userMessage,
     context,
   });
@@ -75,7 +75,7 @@ export const getUserTicketCount = wrapServiceBoundary(async function getUserTick
 }, {
   service: TICKET_SERVICE,
   operation: 'getUserTicketCount',
-  userMessage: 'Failed to count open tickets.',
+  userMessage: 'فشل في عدّ التذاكر المفتوحة.',
   context: {},
 });
 
@@ -89,8 +89,8 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
     
     if (currentTicketCount >= maxTicketsPerUser) {
       ticketUserError(
-        `Max open tickets reached for ${member.id}`,
-        `You have reached the maximum number of open tickets (${maxTicketsPerUser}). Please close your existing tickets before creating a new one.`,
+        `تم الوصول إلى الحد الأقصى لعدد التذاكر المفتوحة لـ ${member.id}`,
+        `لقد وصلت إلى الحد الأقصى لعدد التذاكر المفتوحة (${maxTicketsPerUser}). يرجى إغلاق تذاكرك الحالية قبل إنشاء تذكرة جديدة.`,
         ErrorTypes.VALIDATION,
         { guildId: guild.id, userId: member.id, operation: 'createTicket' }
       );
