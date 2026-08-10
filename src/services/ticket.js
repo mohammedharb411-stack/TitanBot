@@ -232,7 +232,7 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
     return { channel, ticketData };
     
   } catch (error) {
-    rethrowTicketError(error, 'createTicket', 'Failed to create ticket. Please try again in a moment.', { guildId: guild?.id, userId: member?.id });
+    rethrowTicketError(error, 'createTicket', 'Failed to إنشاء تكت. Please try again in a moment.', { guildId: guild?.id, userId: member?.id });
   }
 }
 
