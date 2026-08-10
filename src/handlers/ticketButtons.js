@@ -58,17 +58,17 @@ async function assertTicketPermission(interaction, client, actionLabel, options 
 
   if (!context.ticketData) {
     throw createError(
-      'ليست قناة لبيع التذاكر',
+      'ليست قناة لبيع التكت',
       ErrorTypes.VALIDATION,
-      'لا يمكن استخدام هذا الإجراء إلا في قناة تذاكر صالحة.'
+      'لا يمكن استخدام هذا الإجراء إلا في قناة تكت صالحة.'
     );
   }
 
   const allowed = allowTicketCreator ? context.canCloseTicket : context.canManageTicket;
   if (!allowed) {
     const permissionMessage = allowTicketCreator
-      ? 'يجب أن يكون لديك **إدارة القنوات**، أو **دور موظفي التذاكر** المُكوّن، أو أن تكون **منشئ التذاكر**.'
-      : 'يجب أن يكون لديك **إدارة القنوات** أو **دور موظفي التذاكر** المُكوّن.';
+      ? 'يجب أن يكون لديك **إدارة القنوات**، أو **دور موظفي التكت** المُكوّن، أو أن تكون **منشئ التكت**.'
+      : 'يجب أن يكون لديك **إدارة القنوات** أو **دور موظفي التكت** المُكوّن.';
     throw createError(
       'Ticket permission denied',
       ErrorTypes.PERMISSION,
@@ -85,15 +85,15 @@ async function ensureTicketPermission(interaction, client, actionLabel, options 
   const context = await getTicketPermissionContext({ client, interaction });
 
   if (!context.ticketData) {
-    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لا يمكن استخدام هذا الإجراء إلا في قناة تذاكر صالحة.' });
+    await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لا يمكن استخدام هذا الإجراء إلا في قناة تكت صالحة.' });
     return null;
   }
 
   const allowed = allowTicketCreator ? context.canCloseTicket : context.canManageTicket;
   if (!allowed) {
     const permissionMessage = allowTicketCreator
-      ? 'يجب أن يكون لديك **إدارة القنوات**، أو **دور موظفي التذاكر** المُكوّن، أو أن تكون **منشئ التذاكر**.'
-      : 'يجب أن يكون لديك **إدارة القنوات** أو **دور موظفي التذاكر** المُكوّن.';
+      ? 'يجب أن يكون لديك **إدارة القنوات**، أو **دور موظفي التكت** المُكوّن، أو أن تكون **منشئ التكت**.'
+      : 'يجب أن يكون لديك **إدارة القنوات** أو **دور موظفي التكت** المُكوّن.';
 
     await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: `${permissionMessage}\n\nلا يمكنك ${actionLabel}.` });
     return null;
@@ -122,7 +122,7 @@ const createTicketHandler = {
       const currentTicketCount = await getUserTicketCount(interaction.guildId, interaction.user.id);
       
       if (currentTicketCount >= maxTicketsPerUser) {
-        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `لقد وصلت إلى الحد الأقصى لعدد التذاكر المفتوحة (${maxTicketsPerUser}).\n\nيرجى إغلاق تذاكرك الحالية قبل إنشاء تكت جديدة.\n\n**Current Tickets:** ${currentTicketCount}/${maxTicketsPerUser}` });
+        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `لقد وصلت إلى الحد الأقصى لعدد التكت المفتوحة (${maxTicketsPerUser}).\n\nيرجى إغلاق تكتك الحالية قبل إنشاء تكت جديدة.\n\n**Current Tickets:** ${currentTicketCount}/${maxTicketsPerUser}` });
       }
       
       const modal = new ModalBuilder()
@@ -227,7 +227,7 @@ const closeTicketModalHandler = {
       if (!deferSuccess) return;
 
       const providedReason = interaction.fields.getTextInputValue('reason')?.trim();
-      const reason = providedReason || 'تم إغلاق الطلب عبر زر التذاكر دون سبب محدد.';
+      const reason = providedReason || 'تم إغلاق الطلب عبر زر التكت دون سبب محدد.';
 
       await closeTicket(interaction.channel, interaction.user, reason);
       await interaction.editReply({ embeds: [successEmbed('تم إغلاق التكت', 'تم إغلاق هذه التكت.')] });
