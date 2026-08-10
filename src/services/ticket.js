@@ -100,12 +100,12 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
       guild.channels.cache.get(categoryId) :
       guild.channels.cache.find(c => 
         c.type === ChannelType.GuildCategory && 
-        c.name.toLowerCase().includes('tickets')
+        c.name.toLowerCase().includes('تكت')
       );
     
     if (!category && !categoryId) {
       category = await guild.channels.create({
-        name: 'Tickets',
+        name: 'تكت',
         type: ChannelType.GuildCategory,
         permissionOverwrites: [
           {
@@ -177,8 +177,8 @@ export async function createTicket(guild, member, categoryId, reason = 'No reaso
       description: `${member.toString()},شكراً لإنشاء تكت!\n\n**السبب:** ${reason}\n**أولوية:** ${priorityInfo.emoji} ${priorityInfo.label}`,
       color: priorityInfo.color,
       fields: [
-        { name: 'الحالة', value: '🟢 Open', inline: true },
-        { name: 'الشخص', value: 'Not claimed', inline: true },
+        { name: 'الحالة', value: '🟢 مفتوح', inline: true },
+        { name: 'الشخص', value: 'غير معروف', inline: true },
         { name: 'وقت', value: `<t:${Math.floor(Date.now() / 1000)}:R>`, inline: true },
       ],
     });
