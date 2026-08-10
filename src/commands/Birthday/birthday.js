@@ -12,24 +12,24 @@ import birthdaySetchannel from './modules/birthday_setchannel.js';
 import { InteractionHelper } from '../../utils/interactionHelper.js';
 export default {
     data: new SlashCommandBuilder()
-        .setName('عيد ميلاد')
-        .setDescription('أوامر نظام أعياد الميلاد')
+        .setName('birthday')
+        .setDescription('Birthday system commands')
         .addSubcommand(subcommand =>
             subcommand
-                .setName('تعيين')
-                .setDescription('حدد تاريخ ميلادك')
+                .setName('set')
+                .setDescription('Set your birthday')
                 .addIntegerOption(option =>
                     option
-                        .setName('شهر')
-                        .setDescription('شهر الميلاد (1-12)')
+                        .setName('month')
+                        .setDescription('Birth month (1-12)')
                         .setRequired(true)
                         .setMinValue(1)
                         .setMaxValue(12)
                 )
                 .addIntegerOption(option =>
                     option
-                        .setName('يوم')
-                        .setDescription('عيد ميلاد (1-31)')
+                        .setName('day')
+                        .setDescription('Birth day (1-31)')
                         .setRequired(true)
                         .setMinValue(1)
                         .setMaxValue(31)
@@ -37,38 +37,38 @@ export default {
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('معلومات')
-                .setDescription('عرض معلومات عيد الميلاد')
+                .setName('info')
+                .setDescription('View birthday information')
                 .addUserOption(option =>
                     option
-                        .setName('مستخدم')
-                        .setDescription('يمكن للمستخدم التحقق من تاريخ الميلاد لـ')
+                        .setName('user')
+                        .setDescription('User to check birthday for')
                         .setRequired(false)
                 )
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('قائمة')
-                .setDescription('اعرض جميع أعياد الميلاد في الخادم')
+                .setName('list')
+                .setDescription('List all birthdays in the server')
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('يزيل')
-                .setDescription('قم بإزالة تاريخ ميلادك')
+                .setName('remove')
+                .setDescription('Remove your birthday')
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('التالي')
-                .setDescription('عرض أعياد الميلاد القادمة')
+                .setName('next')
+                .setDescription('Show upcoming birthdays')
         )
         .addSubcommand(subcommand =>
             subcommand
-                .setName('ضبط القناة')
-                .setDescription('قم بتعيين أو تعطيل القناة الخاصة بإعلانات أعياد الميلاد. (إدارة الخادم مطلوبة)')
+                .setName('setchannel')
+                .setDescription('Set or disable the channel for birthday announcements. (Manage Server required)')
                 .addChannelOption(option =>
                     option
-                        .setName('قناة')
-                        .setDescription('قناة الرسائل النصية للإعلانات. اتركها فارغة لتعطيلها..')
+                        .setName('channel')
+                        .setDescription('The text channel for announcements. Leave empty to disable.')
                         .addChannelTypes(ChannelType.GuildText)
                         .setRequired(false)
                 )
