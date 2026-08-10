@@ -302,7 +302,7 @@ const pinTicketHandler = {
     try {
       if (!(await ensureGuildContext(interaction))) return;
 
-      await assertTicketPermission(interaction, client, 'pin tickets', {}, 2000);
+      await assertTicketPermission(interaction, client, 'تذاكر الدبوس', {}, 2000);
 
       const deferSuccess = await InteractionHelper.safeDefer(interaction, { flags: MessageFlags.Ephemeral });
       if (!deferSuccess) return;
@@ -311,7 +311,7 @@ const pinTicketHandler = {
       const category = channel.parent;
 
       if (!category) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'This ticket is not in a category.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'هذه التذكرة ليست ضمن أي فئة.' });
         return;
       }
 
@@ -327,14 +327,14 @@ const pinTicketHandler = {
 
         await interaction.editReply({
           embeds: [createEmbed({
-            title: '📌 Ticket Unpinned',
-            description: 'This ticket has been unpinned and moved back to normal position.',
+            title: '📌 تم إلغاء تثبيت التكت',
+            description: 'تم إلغاء تثبيت هذه التكت وإعادتها إلى موضعها الطبيعي.',
             color: 0x95A5A6
           })],
           flags: MessageFlags.Ephemeral
         });
 
-        logger.info('Ticket unpinned', {
+        logger.info('تم إلغاء تثبيت التكت', {
           guildId: interaction.guildId,
           channelId: channel.id,
           channelName: newName,
@@ -350,14 +350,14 @@ const pinTicketHandler = {
 
         await interaction.editReply({
           embeds: [createEmbed({
-            title: '📌 Ticket Pinned',
-            description: 'This ticket has been pinned to the top of the category.',
+            title: '📌 تم تثبيت التكت',
+            description: 'تم تثبيت هذه التكت في أعلى الفئة.',
             color: 0x3498db
           })],
           flags: MessageFlags.Ephemeral
         });
 
-        logger.info('Ticket pinned', {
+        logger.info('تم تثبيت التكت', {
           guildId: interaction.guildId,
           channelId: channel.id,
           channelName: pinnedName,
@@ -369,7 +369,7 @@ const pinTicketHandler = {
         client: interaction.client,
         guildId: interaction.guildId,
         event: {
-          type: hasPingEmoji ? 'unpin' : 'pin',
+          type: hasPingEmoji ? 'إلغاء التثبيت' : 'التثبيت',
           ticketId: channel.id,
           ticketNumber: channel.name.replace(/[^0-9]/g, ''),
           userId: interaction.user.id,
@@ -382,11 +382,11 @@ const pinTicketHandler = {
       });
 
     } catch (error) {
-      logger.error('Error pinning/unpinning ticket:', error);
+      logger.error('خطأ في تثبيت/إلغاء تثبيت التكت:', error);
       if (!interaction.replied && !interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Failed to pin/unpin the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'فشل تثبيت/إلغاء تثبيت التكت.' });
       } else if (interaction.deferred) {
-        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'Failed to pin/unpin the ticket.' });
+        await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'فشل تثبيت/إلغاء تثبيت التكت.' });
       }
     }
   }
