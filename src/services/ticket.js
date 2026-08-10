@@ -710,10 +710,10 @@ export async function deleteTicket(channel, deleter) {
     const ticketData = requireTicket(await getTicketData(channel.guild.id, channel.id), channel);
     
     const deleteEmbed = createEmbed({
-      title: 'Ticket Deleted',
-      description: `🗑️ This ticket will be permanently deleted in ${TICKET_DELETE_DELAY_SECONDS} seconds.`,
+      title: 'تم حذف التكت',
+      description: `🗑️ سيتم حذف هذه التكت نهائياً في ${TICKET_DELETE_DELAY_SECONDS} ثوانٍ.`,
       color: '#e74c3c',
-      footer: { text: `Ticket ID: ${ticketData.id}` }
+      footer: { text: `التكت ID: ${ticketData.id}` }
     });
     
     await channel.send({ embeds: [deleteEmbed] });
@@ -821,8 +821,8 @@ export async function deleteTicket(channel, deleter) {
         }
 
         try {
-          await channel.delete('Ticket deleted permanently');
-          logger.info('✅ Channel deleted', {
+          await channel.delete('تم حذف التكت نهائياً');
+          logger.info('✅ تم حذف القناة', {
             channelId: channel.id,
             channelName: channel.name,
             ticketNumber: ticketData.id
