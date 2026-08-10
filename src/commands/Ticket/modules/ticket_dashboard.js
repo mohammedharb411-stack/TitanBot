@@ -162,7 +162,7 @@ function buildDashboardEmbed(config, guild, panelStatus = null, ticketStats = nu
             { name: 'رسالة اللوحة', value: panelMsg, inline: false },
             { name: 'ملصق الزر', value: btnLabel, inline: true },
             { name: 'الحد الأقصى للتكت/المستخدم', value: String(config.maxTicketsPerUser || 3), inline: true },
-            { name: 'رسالة خاصة عند الإغلاق', value: config.dmOnClose !== false ? 'Enabled' : 'Disabled', inline: true },
+            { name: 'رسالة خاصة عند الإغلاق', value: config.dmOnClose !== false ? 'مُفعّل' : 'عاجز', inline: true },
             { name: 'قناة سجلات التكت', value: ticketLogsChannel, inline: true },
             { name: 'قناة النصوص', value: transcriptChannel, inline: true },
             { name: '\u200B', value: '\u200B', inline: true },
