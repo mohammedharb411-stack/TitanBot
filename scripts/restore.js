@@ -44,7 +44,7 @@ function ensureCommand(command) {
   });
 
   if (result.status !== 0) {
-    throw new Error(`${command} is required but was not found in PATH.`);
+    throw new Error(`${command} هو مطلوب but was غير موجود في PATH.`);
   }
 }
 
@@ -56,7 +56,7 @@ async function resolveLatestBackup(backupDir) {
     .sort((left, right) => right.localeCompare(left));
 
   if (dumpFiles.length === 0) {
-    throw new Error(`No .dump backup files found in ${backupDir}`);
+    throw new Error(`لا .dump backup files موجود في ${backupDir}`);
   }
 
   return path.join(backupDir, dumpFiles[0]);
@@ -80,11 +80,11 @@ async function run() {
   const targetUrl = args['target-url'] || process.env.POSTGRES_RESTORE_URL || process.env.POSTGRES_URL;
 
   if (!targetUrl) {
-    throw new Error('Missing target database URL. Set POSTGRES_RESTORE_URL or POSTGRES_URL.');
+    throw new Error('مفقود target قاعدة البيانات URL. تعيين POSTGRES_RESTORE_URL أو POSTGRES_URL.');
   }
 
   if (!args.confirm) {
-    throw new Error('Restore requires explicit confirmation. Re-run with --confirm.');
+    throw new Error('Restore requires explicit confirmation. Re-run مع --تأكيد.');
   }
 
   ensureCommand('pg_restore');
