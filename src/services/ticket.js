@@ -372,10 +372,10 @@ components: []
     }
     
     const closeEmbed = createEmbed({
-      title: 'Ticket Closed',
-      description: `This ticket has been closed by ${closer}.\n**Reason:** ${reason}${dmOnClose ? '\n\n📩 A DM has been sent to the ticket creator.' : ''}`,
-      color: '#e74c3c',
-      footer: { text: `Ticket ID: ${ticketData.id}` }
+      title: 'تم إغلاق التكت',
+      description: `تم إغلاق هذه التكت بواسطة ${closer}.\n**السبب:** ${reason}${dmOnClose ? '\n\n📩 تم إرسال رسالة خاصة إلى مُنشئ التكت.' : ''}`,
+      color: '#ff0000',
+      footer: { text: `التكت ID: ${ticketData.id}` }
     });
     
     const controlRow = new ActionRowBuilder().addComponents(
