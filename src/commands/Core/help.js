@@ -69,7 +69,7 @@ export async function createInitialHelpMenu(client) {
             const icon = CATEGORY_ICONS[categoryName] || "🔍";
             return {
                 label: `${icon} ${categoryName}`,
-                description: `عرض الأوامر في ال ${categoryName} category`,
+                description: `عرض الأوامر في ال ${categoryName} فئة`,
                 value: category,
             };
         }),
