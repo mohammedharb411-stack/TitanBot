@@ -33,7 +33,7 @@ async function deferComponent(interaction) {
         await interaction.deferUpdate();
         return true;
     } catch (error) {
-        logger.debug('Component interaction expired or already acknowledged:', error.message);
+        logger.debug('انتهت صلاحية تفاعل المكون أو تم الاعتراف به مسبقاً:', error.message);
         return false;
     }
 }
@@ -45,72 +45,72 @@ async function sendEphemeralFollowUp(interaction, payload) {
             flags: MessageFlags.Ephemeral,
         });
     } catch (error) {
-        logger.debug('Failed to send ephemeral follow-up:', error.message);
+        logger.debug('فشل إرسال رسالة متابعة مؤقتة:', error.message);
     }
 }
 
 function buildDashboardEmbed(cfg, guild) {
-    const welcomeChannel = cfg.channelId ? `<#${cfg.channelId}>` : '`Not set`';
-    const goodbyeChannel = cfg.goodbyeChannelId ? `<#${cfg.goodbyeChannelId}>` : '`Not set`';
+    const welcomeChannel = cfg.channelId ? `<#${cfg.channelId}>` : '`غير مُحدد`';
+    const goodbyeChannel = cfg.goodbyeChannelId ? `<#${cfg.goodbyeChannelId}>` : '`غير مُحدد`';
 
-    const rawWelcome = cfg.welcomeMessage || 'Welcome {user} to {server}!';
-    const rawGoodbye = cfg.leaveMessage || '{user.tag} has left the server.';
+    const rawWelcome = cfg.welcomeMessage || 'مرحباً {user} في {server}!';
+    const rawGoodbye = cfg.leaveMessage || 'غادر {user.tag} الخادم.';
     const welcomePreview = `\`${rawWelcome.length > 55 ? rawWelcome.substring(0, 55) + '…' : rawWelcome}\``;
     const goodbyePreview = `\`${rawGoodbye.length > 55 ? rawGoodbye.substring(0, 55) + '…' : rawGoodbye}\``;
 
     return new EmbedBuilder()
-        .setTitle('👋 Greet System Dashboard')
+        .setTitle('👋 لوحة تحكم نظام الترحيب')
         .setDescription(
-            `Manage welcome & goodbye settings for **${guild.name}**.\nUse the toggles to enable/disable each side, then select an option to edit.`,
+            `إدارة إعدادات الترحيب والوداع لـ **${guild.name}**.\nاستخدم الأزرار لتفعيل/تعطيل كل جانب، ثم اختر خياراً للتعديل.`,
         )
         .setColor(getColor('info'))
         .addFields(
-            { name: 'Welcome Channel', value: welcomeChannel, inline: true },
-            { name: 'Welcome Status', value: cfg.enabled ? 'Enabled' : 'Disabled', inline: true },
-            { name: 'Welcome Ping', value: cfg.welcomePing ? 'On' : 'Off', inline: true },
-            { name: 'Goodbye Channel', value: goodbyeChannel, inline: true },
-            { name: 'Goodbye Status', value: cfg.goodbyeEnabled ? 'Enabled' : 'Disabled', inline: true },
-            { name: 'Goodbye Ping', value: cfg.goodbyePing ? 'On' : 'Off', inline: true },
-            { name: 'Welcome Message', value: welcomePreview, inline: false },
-            { name: 'Goodbye Message', value: goodbyePreview, inline: false },
+            { name: 'قناة الترحيب', value: welcomeChannel, inline: true },
+            { name: 'حالة الترحيب', value: cfg.enabled ? 'مُفعّل' : 'مُعطّل', inline: true },
+            { name: 'منشن الترحيب', value: cfg.welcomePing ? 'مُفعّل' : 'مُعطّل', inline: true },
+            { name: 'قناة الوداع', value: goodbyeChannel, inline: true },
+            { name: 'حالة الوداع', value: cfg.goodbyeEnabled ? 'مُفعّل' : 'مُعطّل', inline: true },
+            { name: 'منشن الوداع', value: cfg.goodbyePing ? 'مُفعّل' : 'مُعطّل', inline: true },
+            { name: 'رسالة الترحيب', value: welcomePreview, inline: false },
+            { name: 'رسالة الوداع', value: goodbyePreview, inline: false },
         )
-        .setFooter({ text: 'Dashboard closes after 10 minutes of inactivity' })
+        .setFooter({ text: 'تُغلق اللوحة بعد 10 دقائق من عدم النشاط' })
         .setTimestamp();
 }
 
 function buildSelectMenu(guildId) {
     return new StringSelectMenuBuilder()
         .setCustomId(`greet_cfg_${guildId}`)
-        .setPlaceholder('Select a setting to configure...')
+        .setPlaceholder('اختر إعداداً للتكوين...')
         .addOptions(
             new StringSelectMenuOptionBuilder()
-                .setLabel('Welcome Channel')
-                .setDescription('Set the channel where welcome messages are sent')
+                .setLabel('قناة الترحيب')
+                .setDescription('حدد القناة التي سترسل فيها رسائل الترحيب')
                 .setValue('welcome_channel')
                 .setEmoji('🟢'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Welcome Message')
-                .setDescription('Edit the text shown when a member joins')
+                .setLabel('رسالة الترحيب')
+                .setDescription('عدّل النص الذي يظهر عند انضمام عضو')
                 .setValue('welcome_message')
                 .setEmoji('💬'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Welcome Image')
-                .setDescription('Set the image for welcome messages')
+                .setLabel('صورة الترحيب')
+                .setDescription('حدد الصورة لرسائل الترحيب')
                 .setValue('welcome_image')
                 .setEmoji('🖼️'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Goodbye Channel')
-                .setDescription('Set the channel where goodbye messages are sent')
+                .setLabel('قناة الوداع')
+                .setDescription('حدد القناة التي سترسل فيها رسائل الوداع')
                 .setValue('goodbye_channel')
                 .setEmoji('🔴'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Goodbye Message')
-                .setDescription('Edit the text shown when a member leaves')
+                .setLabel('رسالة الوداع')
+                .setDescription('عدّل النص الذي يظهر عند مغادرة عضو')
                 .setValue('goodbye_message')
                 .setEmoji('💬'),
             new StringSelectMenuOptionBuilder()
-                .setLabel('Goodbye Image')
-                .setDescription('Set the image for goodbye messages')
+                .setLabel('صورة الوداع')
+                .setDescription('حدد الصورة لرسائل الوداع')
                 .setValue('goodbye_image')
                 .setEmoji('🖼️'),
         );
@@ -126,13 +126,13 @@ function buildButtonRow(cfg, guildId, disabled = false) {
         new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId(`greet_cfg_toggle_welcome_${guildId}`)
-                .setLabel('Welcome')
+                .setLabel('الترحيب')
                 .setStyle(welcomeOn ? ButtonStyle.Success : ButtonStyle.Danger)
                 .setEmoji('🟢')
                 .setDisabled(disabled),
             new ButtonBuilder()
                 .setCustomId(`greet_cfg_toggle_goodbye_${guildId}`)
-                .setLabel('Goodbye')
+                .setLabel('الوداع')
                 .setStyle(goodbyeOn ? ButtonStyle.Success : ButtonStyle.Danger)
                 .setEmoji('🔴')
                 .setDisabled(disabled),
@@ -140,13 +140,13 @@ function buildButtonRow(cfg, guildId, disabled = false) {
         new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId(`greet_cfg_ping_welcome_${guildId}`)
-                .setLabel('Ping Welcome')
+                .setLabel('منشن الترحيب')
                 .setStyle(welcomePingOn ? ButtonStyle.Primary : ButtonStyle.Secondary)
                 .setEmoji('🔔')
                 .setDisabled(disabled),
             new ButtonBuilder()
                 .setCustomId(`greet_cfg_ping_goodbye_${guildId}`)
-                .setLabel('Ping Goodbye')
+                .setLabel('منشن الوداع')
                 .setStyle(goodbyePingOn ? ButtonStyle.Primary : ButtonStyle.Secondary)
                 .setEmoji('🔔')
                 .setDisabled(disabled),
@@ -165,7 +165,7 @@ async function refreshDashboard(rootInteraction, cfg, guildId) {
             ],
         });
     } catch (error) {
-        logger.debug('Could not refresh greet dashboard (interaction may have expired):', error.message);
+        logger.debug('تعذّر تحديث لوحة تحكم الترحيب (ربما انتهت صلاحية التفاعل):', error.message);
     }
 }
 
@@ -178,9 +178,9 @@ export default {
 
             if (!cfg.channelId && !cfg.goodbyeChannelId) {
                 throw new TitanBotError(
-                    'Greet system not configured',
+                    'نظام الترحيب غير مُكوّن',
                     ErrorTypes.CONFIGURATION,
-                    'Neither Welcome nor Goodbye has been set up yet. Run `/welcome setup` or `/goodbye setup` first.',
+                    'لم يتم إعداد الترحيب أو الوداع بعد. نفّذ `/welcome setup` أو `/goodbye setup` أولاً.',
                 );
             }
 
@@ -231,15 +231,15 @@ export default {
                     }
                 } catch (error) {
                     if (error instanceof TitanBotError) {
-                        logger.debug(`Greet config validation error: ${error.message}`);
+                        logger.debug(`خطأ في التحقق من صحة إعدادات الترحيب: ${error.message}`);
                     } else {
-                        logger.error('Unexpected greet dashboard error:', error);
+                        logger.error('خطأ غير متوقع في لوحة تحكم الترحيب:', error);
                     }
 
                     const errorMessage =
                         error instanceof TitanBotError
-                            ? error.userMessage || 'An error occurred while processing your selection.'
-                            : 'An unexpected error occurred while updating the configuration.';
+                            ? error.userMessage || 'حدث خطأ أثناء معالجة اختيارك.'
+                            : 'حدث خطأ غير متوقع أثناء تحديث الإعدادات.';
 
                     if (!selectInteraction.replied && !selectInteraction.deferred) {
                         await selectInteraction.deferUpdate().catch(() => {});
@@ -277,8 +277,8 @@ export default {
                         await sendEphemeralFollowUp(btnInteraction, {
                             embeds: [
                                 successEmbed(
-                                    '✅ Welcome Updated',
-                                    `Welcome messages are now **${cfg.enabled ? 'enabled' : 'disabled'}**.`,
+                                    '✅ تم تحديث الترحيب',
+                                    `رسائل الترحيب الآن **${cfg.enabled ? 'مُفعّلة' : 'مُعطّلة'}**.`,
                                 ),
                             ],
                         });
@@ -288,8 +288,8 @@ export default {
                         await sendEphemeralFollowUp(btnInteraction, {
                             embeds: [
                                 successEmbed(
-                                    '✅ Goodbye Updated',
-                                    `Goodbye messages are now **${cfg.goodbyeEnabled ? 'enabled' : 'disabled'}**.`,
+                                    '✅ تم تحديث الوداع',
+                                    `رسائل الوداع الآن **${cfg.goodbyeEnabled ? 'مُفعّلة' : 'مُعطّلة'}**.`,
                                 ),
                             ],
                         });
@@ -299,8 +299,8 @@ export default {
                         await sendEphemeralFollowUp(btnInteraction, {
                             embeds: [
                                 successEmbed(
-                                    '✅ Welcome Ping Updated',
-                                    `Joining users will${cfg.welcomePing ? '' : ' **not**'} be pinged in the welcome message.`,
+                                    '✅ تم تحديث منشن الترحيب',
+                                    `سيتم${cfg.welcomePing ? '' : ' **عدم**'} عمل منشن للأعضاء الجدد في رسالة الترحيب.`,
                                 ),
                             ],
                         });
@@ -310,8 +310,8 @@ export default {
                         await sendEphemeralFollowUp(btnInteraction, {
                             embeds: [
                                 successEmbed(
-                                    '✅ Goodbye Ping Updated',
-                                    `Leaving users will${cfg.goodbyePing ? '' : ' **not**'} be pinged in the goodbye message.`,
+                                    '✅ تم تحديث منشن الوداع',
+                                    `سيتم${cfg.goodbyePing ? '' : ' **عدم**'} عمل منشن للأعضاء المغادرين في رسالة الوداع.`,
                                 ),
                             ],
                         });
@@ -319,7 +319,7 @@ export default {
 
                     await refreshDashboard(interaction, cfg, guildId);
                 } catch (error) {
-                    logger.error('Error handling greet dashboard button:', error);
+                    logger.error('خطأ في معالجة زر لوحة تحكم الترحيب:', error);
                 }
             });
 
@@ -330,24 +330,24 @@ export default {
                         await InteractionHelper.safeEditReply(interaction, {
                             embeds: [
                                 new EmbedBuilder()
-                                    .setTitle('Dashboard Timed Out')
-                                    .setDescription('This dashboard has been closed due to inactivity. Please run the command again to continue.')
+                                    .setTitle('انتهت صلاحية اللوحة')
+                                    .setDescription('تم إغلاق هذه اللوحة بسبب عدم النشاط. يرجى تشغيل الأمر مرة أخرى للمتابعة.')
                                     .setColor(getColor('error'))
                             ],
                             components: [],
                         });
                     } catch (error) {
-                        logger.debug('Could not update dashboard on timeout:', error.message);
+                        logger.debug('تعذّر تحديث اللوحة عند انتهاء المهلة:', error.message);
                     }
                 }
             });
         } catch (error) {
             if (error instanceof TitanBotError) throw error;
-            logger.error('Unexpected error in greet_dashboard:', error);
+            logger.error('خطأ غير متوقع في greet_dashboard:', error);
             throw new TitanBotError(
-                `Greet dashboard failed: ${error.message}`,
+                `فشلت لوحة تحكم الترحيب: ${error.message}`,
                 ErrorTypes.UNKNOWN,
-                'Failed to open the greet dashboard.',
+                'فشل فتح لوحة تحكم الترحيب.',
             );
         }
     },
@@ -360,16 +360,16 @@ async function handleWelcomeChannel(selectInteraction, rootInteraction, cfg, gui
 
     const channelSelect = new ChannelSelectMenuBuilder()
         .setCustomId('greet_cfg_welcome_channel')
-        .setPlaceholder('Select a text channel...')
+        .setPlaceholder('اختر قناة نصية...')
         .addChannelTypes(ChannelType.GuildText)
         .setMaxValues(1);
 
     await sendEphemeralFollowUp(selectInteraction, {
         embeds: [
             new EmbedBuilder()
-                .setTitle('🟢 Welcome Channel')
+                .setTitle('🟢 قناة الترحيب')
                 .setDescription(
-                    `**Current:** ${cfg.channelId ?`<#${cfg.channelId}>`: '`Not set`'}\n\nSelect the channel where welcome messages will be sent.`,
+                    `**الحالي:** ${cfg.channelId ?`<#${cfg.channelId}>`: '\`غير مُحدد\`'}\n\nاختر القناة التي سترسل فيها رسائل الترحيب.`,
                 )
                 .setColor(getColor('info')),
         ],
@@ -393,7 +393,7 @@ async function handleWelcomeChannel(selectInteraction, rootInteraction, cfg, gui
         if (!botHasPermission(channel, ['ViewChannel', 'SendMessages', 'EmbedLinks'])) {
             await replyUserError(chanInteraction, {
                 type: ErrorTypes.PERMISSION,
-                message: `I need **View Channel**, **Send Messages**, and **Embed Links** in ${channel}.`,
+                message: `أحتاج إلى صلاحية **عرض القناة** و**إرسال الرسائل** و**تضمين الروابط** في ${channel}.`,
             });
             return;
         }
@@ -402,7 +402,7 @@ async function handleWelcomeChannel(selectInteraction, rootInteraction, cfg, gui
         await saveWelcomeConfig(client, guildId, cfg);
 
         await sendEphemeralFollowUp(chanInteraction, {
-            embeds: [successEmbed('Channel Updated', `Welcome messages will now be sent in ${channel}.`)],
+            embeds: [successEmbed('تم تحديث القناة', `سيتم إرسال رسائل الترحيب الآن في ${channel}.`)],
         });
 
         await refreshDashboard(rootInteraction, cfg, guildId);
@@ -412,7 +412,7 @@ async function handleWelcomeChannel(selectInteraction, rootInteraction, cfg, gui
         if (reason === 'time' && collected.size === 0) {
             replyUserError(selectInteraction, {
                 type: ErrorTypes.RATE_LIMIT,
-                message: 'No channel was selected. The setting was not changed.',
+                message: 'لم يتم اختيار قناة. لم يتم تغيير الإعداد.',
             }).catch(() => {});
         }
     });
@@ -421,14 +421,14 @@ async function handleWelcomeChannel(selectInteraction, rootInteraction, cfg, gui
 async function handleWelcomeMessage(selectInteraction, rootInteraction, cfg, guildId, client) {
     const modal = new ModalBuilder()
         .setCustomId('greet_cfg_welcome_message')
-        .setTitle('Edit Welcome Message')
+        .setTitle('تعديل رسالة الترحيب')
         .addComponents(
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('message_input')
-                    .setLabel('Message (variables: {user}, {server}, etc)')
+                    .setLabel('الرسالة (المتغيرات: {user}, {server}, إلخ)')
                     .setStyle(TextInputStyle.Paragraph)
-                    .setValue(cfg.welcomeMessage || 'Welcome {user} to {server}!')
+                    .setValue(cfg.welcomeMessage || 'مرحباً {user} في {server}!')
                     .setMaxLength(2000)
                     .setMinLength(1)
                     .setRequired(true),
@@ -455,7 +455,7 @@ async function handleWelcomeMessage(selectInteraction, rootInteraction, cfg, gui
     await saveWelcomeConfig(client, guildId, cfg);
 
     await submitted.reply({
-        embeds: [successEmbed('Welcome Message Updated', 'The welcome message has been saved.')],
+        embeds: [successEmbed('تم تحديث رسالة الترحيب', 'تم حفظ رسالة الترحيب.')],
         flags: MessageFlags.Ephemeral,
     });
 
@@ -465,13 +465,13 @@ async function handleWelcomeMessage(selectInteraction, rootInteraction, cfg, gui
 async function handleWelcomeImage(selectInteraction, rootInteraction, cfg, guildId, client) {
     const modal = new ModalBuilder()
         .setCustomId('greet_cfg_welcome_image')
-        .setTitle('Set Welcome Image');
+        .setTitle('تعيين صورة الترحيب');
 
     const imageHint = new TextDisplayBuilder()
-        .setContent('Provide a direct image URL **or** upload a file below. If both are given, the uploaded file takes priority. Leave the URL blank and skip the upload to remove the image.');
+        .setContent('قدّم رابط صورة مباشر **أو** قم برفع ملف أدناه. إذا تم تقديم الاثنين، سيُعطى الملف المرفوع الأولوية. اترك الرابط فارغاً وتجاوز الرفع لإزالة الصورة.');
 
     const urlLabel = new LabelBuilder()
-        .setLabel('Image URL (optional)')
+        .setLabel('رابط الصورة (اختياري)')
         .setTextInputComponent(
             new TextInputBuilder()
                 .setCustomId('image_input')
@@ -482,7 +482,7 @@ async function handleWelcomeImage(selectInteraction, rootInteraction, cfg, guild
         );
 
     const uploadLabel = new LabelBuilder()
-        .setLabel('Or upload an image file (optional)')
+        .setLabel('أو ارفع ملف صورة (اختياري)')
         .setFileUploadComponent(
             new FileUploadBuilder()
                 .setCustomId('image_upload')
@@ -516,11 +516,11 @@ async function handleWelcomeImage(selectInteraction, rootInteraction, cfg, guild
         try {
             new URL(imageUrl);
             if (!['http:', 'https:'].includes(new URL(imageUrl).protocol)) {
-                await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'Image URL must start with `http://` or `https://`.' });
+                await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'يجب أن يبدأ رابط الصورة بـ `http://` أو `https://`.' });
                 return;
             }
         } catch {
-            await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'Please provide a valid image URL.' });
+            await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'يرجى تقديم رابط صورة صالح.' });
             return;
         }
     }
@@ -529,7 +529,7 @@ async function handleWelcomeImage(selectInteraction, rootInteraction, cfg, guild
     await saveWelcomeConfig(client, guildId, cfg);
 
     await submitted.reply({
-        embeds: [successEmbed('Welcome Image Updated', `Image ${imageUrl ? 'updated' : 'removed'} successfully.`)],
+        embeds: [successEmbed('تم تحديث صورة الترحيب', `تم ${imageUrl ? 'تحديث' : 'إزالة'} الصورة بنجاح.`)],
         flags: MessageFlags.Ephemeral,
     });
 
@@ -547,8 +547,8 @@ async function handleWelcomePing(selectInteraction, rootInteraction, cfg, guildI
     await sendEphemeralFollowUp(selectInteraction, {
         embeds: [
             successEmbed(
-                '✅ Welcome Ping Updated',
-                `Joining users will${cfg.welcomePing ? '' : ' **not**'} be pinged in the welcome message.`,
+                '✅ تم تحديث منشن الترحيب',
+                `سيتم${cfg.welcomePing ? '' : ' **عدم**'} عمل منشن للأعضاء الجدد في رسالة الترحيب.`,
             ),
         ],
     });
@@ -563,16 +563,16 @@ async function handleGoodbyeChannel(selectInteraction, rootInteraction, cfg, gui
 
     const channelSelect = new ChannelSelectMenuBuilder()
         .setCustomId('greet_cfg_goodbye_channel')
-        .setPlaceholder('Select a text channel...')
+        .setPlaceholder('اختر قناة نصية...')
         .addChannelTypes(ChannelType.GuildText)
         .setMaxValues(1);
 
     await sendEphemeralFollowUp(selectInteraction, {
         embeds: [
             new EmbedBuilder()
-                .setTitle('🔴 Goodbye Channel')
+                .setTitle('🔴 قناة الوداع')
                 .setDescription(
-                    `**Current:** ${cfg.goodbyeChannelId ?`<#${cfg.goodbyeChannelId}>`: '`Not set`'}\n\nSelect the channel where goodbye messages will be sent.`,
+                    `**الحالي:** ${cfg.goodbyeChannelId ?`<#${cfg.goodbyeChannelId}>`: '\`غير مُحدد\`'}\n\nاختر القناة التي سترسل فيها رسائل الوداع.`,
                 )
                 .setColor(getColor('info')),
         ],
@@ -596,7 +596,7 @@ async function handleGoodbyeChannel(selectInteraction, rootInteraction, cfg, gui
         if (!botHasPermission(channel, ['ViewChannel', 'SendMessages', 'EmbedLinks'])) {
             await replyUserError(chanInteraction, {
                 type: ErrorTypes.PERMISSION,
-                message: `I need **View Channel**, **Send Messages**, and **Embed Links** in ${channel}.`,
+                message: `أحتاج إلى صلاحية **عرض القناة** و**إرسال الرسائل** و**تضمين الروابط** في ${channel}.`,
             });
             return;
         }
@@ -605,7 +605,7 @@ async function handleGoodbyeChannel(selectInteraction, rootInteraction, cfg, gui
         await saveWelcomeConfig(client, guildId, cfg);
 
         await sendEphemeralFollowUp(chanInteraction, {
-            embeds: [successEmbed('Channel Updated', `Goodbye messages will now be sent in ${channel}.`)],
+            embeds: [successEmbed('تم تحديث القناة', `سيتم إرسال رسائل الوداع الآن في ${channel}.`)],
         });
 
         await refreshDashboard(rootInteraction, cfg, guildId);
@@ -615,7 +615,7 @@ async function handleGoodbyeChannel(selectInteraction, rootInteraction, cfg, gui
         if (reason === 'time' && collected.size === 0) {
             replyUserError(selectInteraction, {
                 type: ErrorTypes.RATE_LIMIT,
-                message: 'No channel was selected. The setting was not changed.',
+                message: 'لم يتم اختيار قناة. لم يتم تغيير الإعداد.',
             }).catch(() => {});
         }
     });
@@ -624,14 +624,14 @@ async function handleGoodbyeChannel(selectInteraction, rootInteraction, cfg, gui
 async function handleGoodbyeMessage(selectInteraction, rootInteraction, cfg, guildId, client) {
     const modal = new ModalBuilder()
         .setCustomId('greet_cfg_goodbye_message')
-        .setTitle('Edit Goodbye Message')
+        .setTitle('تعديل رسالة الوداع')
         .addComponents(
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('message_input')
-                    .setLabel('Message (variables: {user}, {server}, etc)')
+                    .setLabel('الرسالة (المتغيرات: {user}, {server}, إلخ)')
                     .setStyle(TextInputStyle.Paragraph)
-                    .setValue(cfg.leaveMessage || '{user.tag} has left the server.')
+                    .setValue(cfg.leaveMessage || 'غادر {user.tag} الخادم.')
                     .setMaxLength(2000)
                     .setMinLength(1)
                     .setRequired(true),
@@ -658,7 +658,7 @@ async function handleGoodbyeMessage(selectInteraction, rootInteraction, cfg, gui
     await saveWelcomeConfig(client, guildId, cfg);
 
     await submitted.reply({
-        embeds: [successEmbed('Goodbye Message Updated', 'The goodbye message has been saved.')],
+        embeds: [successEmbed('تم تحديث رسالة الوداع', 'تم حفظ رسالة الوداع.')],
         flags: MessageFlags.Ephemeral,
     });
 
@@ -668,13 +668,13 @@ async function handleGoodbyeMessage(selectInteraction, rootInteraction, cfg, gui
 async function handleGoodbyeImage(selectInteraction, rootInteraction, cfg, guildId, client) {
     const modal = new ModalBuilder()
         .setCustomId('greet_cfg_goodbye_image')
-        .setTitle('Set Goodbye Image');
+        .setTitle('تعيين صورة الوداع');
 
     const imageHint = new TextDisplayBuilder()
-        .setContent('Provide a direct image URL **or** upload a file below. If both are given, the uploaded file takes priority. Leave the URL blank and skip the upload to remove the image.');
+        .setContent('قدّم رابط صورة مباشر **أو** قم برفع ملف أدناه. إذا تم تقديم الاثنين، سيُعطى الملف المرفوع الأولوية. اترك الرابط فارغاً وتجاوز الرفع لإزالة الصورة.');
 
     const urlLabel = new LabelBuilder()
-        .setLabel('Image URL (optional)')
+        .setLabel('رابط الصورة (اختياري)')
         .setTextInputComponent(
             new TextInputBuilder()
                 .setCustomId('image_input')
@@ -689,7 +689,7 @@ async function handleGoodbyeImage(selectInteraction, rootInteraction, cfg, guild
         );
 
     const uploadLabel = new LabelBuilder()
-        .setLabel('Or upload an image file (optional)')
+        .setLabel('أو ارفع ملف صورة (اختياري)')
         .setFileUploadComponent(
             new FileUploadBuilder()
                 .setCustomId('image_upload')
@@ -723,11 +723,11 @@ async function handleGoodbyeImage(selectInteraction, rootInteraction, cfg, guild
         try {
             new URL(imageUrl);
             if (!['http:', 'https:'].includes(new URL(imageUrl).protocol)) {
-                await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'Image URL must start with `http://` or `https://`.' });
+                await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'يجب أن يبدأ رابط الصورة بـ `http://` أو `https://`.' });
                 return;
             }
         } catch {
-            await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'Please provide a valid image URL.' });
+            await replyUserError(submitted, { type: ErrorTypes.VALIDATION, message: 'يرجى تقديم رابط صورة صالح.' });
             return;
         }
     }
@@ -743,7 +743,7 @@ async function handleGoodbyeImage(selectInteraction, rootInteraction, cfg, guild
     await saveWelcomeConfig(client, guildId, cfg);
 
     await submitted.reply({
-        embeds: [successEmbed('Goodbye Image Updated', `Image ${imageUrl ? 'updated' : 'removed'} successfully.`)],
+        embeds: [successEmbed('تم تحديث صورة الوداع', `تم ${imageUrl ? 'تحديث' : 'إزالة'} الصورة بنجاح.`)],
         flags: MessageFlags.Ephemeral,
     });
 
@@ -761,8 +761,8 @@ async function handleGoodbyePing(selectInteraction, rootInteraction, cfg, guildI
     await sendEphemeralFollowUp(selectInteraction, {
         embeds: [
             successEmbed(
-                '✅ Goodbye Ping Updated',
-                `Leaving users will${cfg.goodbyePing ? '' : ' **not**'} be pinged in the goodbye message.`,
+                '✅ تم تحديث منشن الوداع',
+                `سيتم${cfg.goodbyePing ? '' : ' **عدم**'} عمل منشن للأعضاء المغادرين في رسالة الوداع.`,
             ),
         ],
     });
