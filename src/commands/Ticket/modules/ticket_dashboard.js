@@ -912,9 +912,9 @@ async function handleDeleteSystem(btnInteraction, rootInteraction, guildConfig, 
             new ActionRowBuilder().addComponents(
                 new TextInputBuilder()
                     .setCustomId('delete_confirmation')
-                    .setLabel('اكتب "اه حذف يا زلمي" للتأكيد')
+                    .setLabel('اكتب "اه حذف" للتأكيد')
                     .setStyle(TextInputStyle.Short)
-                    .setPlaceholder('اه حذف يا زلمي')
+                    .setPlaceholder('اه حذف')
                     .setMaxLength(6)
                     .setMinLength(6)
                     .setRequired(true)
