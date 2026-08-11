@@ -10,18 +10,18 @@ import { updateTicketPriority } from '../../services/ticket.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("priority")
-        .setDescription("Sets the priority level for the current support ticket.")
+        .setDescription("يحدد مستوى الأولوية لتكت الدعم الحالية.")
         .addStringOption((option) =>
             option
                 .setName("level")
-                .setDescription("The priority level for the ticket.")
+                .setDescription("مستوى أولوية التكت.")
                 .setRequired(true)
                 .addChoices(
-                    { name: "Urgent", value: "urgent" },
-                    { name: "High", value: "high" },
-                    { name: "Medium", value: "medium" },
-                    { name: "Low", value: "low" },
-                    { name: "None", value: "none" },
+                    { name: "عاجل", value: "urgent" },
+                    { name: "عالي", value: "high" },
+                    { name: "واسطة", value: "medium" },
+                    { name: "قليل", value: "low" },
+                    { name: "لا أحد", value: "none" },
                 ),
             )
         .setDMPermission(false),
