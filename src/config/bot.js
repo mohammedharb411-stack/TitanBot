@@ -2,112 +2,112 @@ import { logger } from '../utils/logger.js';
 
 export const botConfig = {
   // =========================
-  // BOT PRESENCE (what users see under the bot name)
+  // حالة البوت (ما يراه المستخدمون تحت اسم البوت)
   // =========================
-  // `status` options:
-  // - "online"    = green dot
-  // - "idle"      = yellow moon
-  // - "dnd"       = red do-not-disturb
-  // - "invisible" = appears offline
+  // خيارات `status`:
+  // - "online"    = نقطة خضراء
+  // - "idle"      = هلال أصفر
+  // - "dnd"       = أحمر عدم الإزعاج
+  // - "invisible" = يظهر غير متصل
   presence: {
-    // Current online state shown on Discord.
-    status: "online",
+    // الحالة الحالية المعروضة على ديسكورد.
+    status: "dnd",
 
-    // Activity lines shown under the bot name.
-    // `type` number mapping from Discord:
-    // 0 = Playing
-    // 1 = Streaming
-    // 2 = Listening
-    // 3 = Watching
-    // 4 = Custom
-    // 5 = Competing
+    // سطور النشاط المعروضة تحت اسم البوت.
+    // رقم `type` من ديسكورد:
+    // 0 = يلعب
+    // 1 = يبث
+    // 2 = يستمع
+    // 3 = يشاهد
+    // 4 = مخصص
+    // 5 = يتنافس
     activities: [
       {
-        name: "Custom Status", // required by Discord API, not shown in the client
-        state: "stalking",     // this is what people actually see
-        type: 4,               // Custom
+        name: "Custom Status", // مطلوب من Discord API، لا يُعرض في العميل
+        state: "أراقبك",     // هذا ما يراه الناس فعلياً
+        type: 0,               // مخصص
       },
     ],
   },
 
   // =========================
-  // COMMAND BEHAVIOR
+  // سلوك الأوامر
   // =========================
   commands: {
-    // Bot owner user IDs (comma-separated in OWNER_IDS env var).
-    // Owners can access owner/admin-level bot commands.
+    // معرفات مالكي البوت (مفصولة بفواصل في متغير البيئة OWNER_IDS).
+    // يمكن للمالكين الوصول إلى أوامر البوت الخاصة بالمالك/المسؤول.
     owners: process.env.OWNER_IDS?.split(",").map((id) => id.trim()).filter(Boolean) || [],
 
-    // Default wait time between command uses (in seconds).
+    // وقت الانتظار الافتراضي بين استخدام الأوامر (بالثواني).
     defaultCooldown: 3,
 
-    // If true, old commands are removed before re-registering.
+    // إذا كان true، تُحذف الأوامر القديمة قبل إعادة التسجيل.
     deleteCommands: false,
 
-    // Optional server ID retained for tutorial compatibility; not used for command registration.
+    // معرف سيرفر اختياري محتفظ به لتوافق البرنامج التعليمي؛ لا يُستخدم لتسجيل الأوامر.
     testGuildId: process.env.TEST_GUILD_ID,
 
-    // When true (or MAINTENANCE_MODE=true), only bot owners can run commands.
+    // عندما يكون true (أو MAINTENANCE_MODE=true)، يمكن لمالكي البوت فقط تشغيل الأوامر.
     maintenanceMode: process.env.MAINTENANCE_MODE === "true",
 
-    // Command prefix for text-based commands (e.g., "!" for "!ping").
-    // Supports both slash commands and prefix commands.
+    // بادئة الأمر للأوامر النصية (مثلاً "!" لأمر "!ping").
+    // يدعم أوامر الشرطة المائلة (Slash) والأوامر النصية.
     prefix: process.env.PREFIX || "!",
   },
 
   // =========================
-  // APPLICATIONS SYSTEM
+  // نظام الطلبات
   // =========================
   applications: {
-    // Default questions shown when someone fills out an application.
+    // الأسئلة الافتراضية المعروضة عندما يملأ شخص ما طلب الانضمام.
     defaultQuestions: [
-      { question: "What is your name?", required: true },
-      { question: "How old are you?", required: true },
-      { question: "Why do you want to join?", required: true },
+      { question: "ما اسمك؟", required: true },
+      { question: "كم عمرك؟", required: true },
+      { question: "لماذا تريد الانضمام؟", required: true },
     ],
 
-    // Embed colors by application status.
+    // ألوان الـ Embed حسب حالة الطلب.
     statusColors: {
       pending: "#FFA500",
       approved: "#00FF00",
       denied: "#FF0000",
     },
 
-    // How long users must wait before submitting another application (hours).
+    // مدة الانتظار قبل أن يتمكن المستخدم من إرسال طلب آخر (بالساعات).
     applicationCooldown: 24,
 
-    // Auto-delete denied applications after this many days.
+    // حذف الطلبات المرفوضة تلقائياً بعد هذا العدد من الأيام.
     deleteDeniedAfter: 7,
 
-    // Auto-delete approved applications after this many days.
+    // حذف الطلبات المقبولة تلقائياً بعد هذا العدد من الأيام.
     deleteApprovedAfter: 30,
 
-    // Role IDs allowed to manage applications.
-    managerRoles: [], // Will be populated from environment or database
+    // معرفات الأدوار المسموح لها بإدارة الطلبات.
+    managerRoles: [], // سيتم ملؤها من البيئة أو قاعدة البيانات
   },
 
   // =========================
-  // EMBED COLORS & BRANDING
+  // ألوان الـ Embed والعلامة التجارية
   // =========================
-  // IMPORTANT: This is the SINGLE SOURCE OF TRUTH for all bot colors
+  // مهم: هذا هو المصدر الوحيد الحقيقي لجميع ألوان البوت
   embeds: {
     colors: {
-      // Main brand colors.
+      // الألوان الرئيسية للعلامة التجارية.
       primary: "#336699",
       secondary: "#2F3136",
 
-      // Standard status colors for success/error/warning/info messages.
+      // ألوان الحالة القياسية لرسائل النجاح/الخطأ/التحذير/المعلومات.
       success: "#57F287",
       error: "#ED4245",
       warning: "#FEE75C",
       info: "#3498DB",
 
-      // Neutral utility colors.
+      // ألوان مساعدة محايدة.
       light: "#FFFFFF",
       dark: "#202225",
       gray: "#99AAB5",
 
-      // Discord-style palette shortcuts.
+      // اختصارات لوحة ألوان ديسكورد.
       blurple: "#5865F2",
       green: "#57F287",
       yellow: "#FEE75C",
@@ -115,7 +115,7 @@ export const botConfig = {
       red: "#ED4245",
       black: "#000000",
 
-      // Feature-specific colors.
+      // ألوان خاصة بالميزات.
       giveaway: {
         active: "#57F287",
         ended: "#ED4245",
@@ -130,7 +130,7 @@ export const botConfig = {
       birthday: "#E91E63",
       moderation: "#9B59B6",
 
-      // Ticket priority color mapping.
+      // تعيين ألوان أولوية التذاكر.
       priority: {
         none: "#95A5A6",
         low: "#3498db",
@@ -140,15 +140,15 @@ export const botConfig = {
       },
     },
     footer: {
-      // Default footer text used in bot embeds.
+      // نص التذييل الافتراضي المستخدم في embeds البوت.
       text: "Titan Bot",
-      // Footer icon URL (null = no icon).
+      // رابط أيقونة التذييل (null = بدون أيقونة).
       icon: null,
     },
-    // Default thumbnail URL for embeds (null = no thumbnail).
+    // رابط الصورة المصغرة الافتراضية للـ embeds (null = بدون صورة مصغرة).
     thumbnail: null,
     author: {
-      // Optional default embed author block.
+      // كتلة مؤلف الـ embed الافتراضية الاختيارية.
       name: null,
       icon: null,
       url: null,
@@ -156,36 +156,36 @@ export const botConfig = {
   },
 
   // =========================
-  // ECONOMY SETTINGS
+  // إعدادات الاقتصاد
   // =========================
   economy: {
     currency: {
-      // Currency display name.
-      name: "coins",
-      // Plural display name.
-      namePlural: "coins",
-      // Currency symbol shown in balances.
-      symbol: "$",
+      // اسم العملة المعروض.
+      name: "كوينز",
+      // اسم الجمع المعروض.
+      namePlural: "كوينز",
+      // رمز العملة المعروض في الأرصدة.
+      symbol: "$"。
     },
 
-    // Starting balance for new users.
+    // الرصيد الابتدائي للمستخدمين الجدد.
     startingBalance: 0,
 
-    // Maximum bank amount before upgrades (if upgrades are used).
+    // الحد الأقصى لمبلغ البنك قبل الترقيات (إذا كانت الترقيات مستخدمة).
     baseBankCapacity: 100000,
 
-    // Daily reward amount.
+    // مقدار مكافأة اليومية.
     dailyAmount: 100,
 
-    // Work command random payout range.
+    // نطاق الدفع العشوائي لأمر العمل.
     workMin: 10,
     workMax: 100,
 
-    // Beg command random payout range.
+    // نطاق الدفع العشوائي لأمر التسول.
     begMin: 5,
     begMax: 50,
 
-    // Command cooldowns (milliseconds).
+    // فترات تبريد الأوامر (بالملي ثانية).
     cooldowns: {
       daily: 24 * 60 * 60 * 1000,
       work: 60 * 60 * 1000,
@@ -193,237 +193,237 @@ export const botConfig = {
       rob: 4 * 60 * 60 * 1000,
     },
 
-    // Chance to succeed when robbing (0.4 = 40%).
+    // فرصة النجاح عند السطو (0.4 = 40%).
     robSuccessRate: 0.4,
 
-    // Jail time after failed rob (milliseconds).
-    // 3600000 = 1 hour.
+    // مدة السجن بعد فشل السطو (بالملي ثانية).
+    // 3600000 = 1 ساعة.
     robFailJailTime: 3600000,
   },
 
   // =========================
-  // SHOP SETTINGS
+  // إعدادات المتجر
   // =========================
-  // Add shop defaults here when needed.
+  // أضف الإعدادات الافتراضية للمتجر هنا عند الحاجة.
   shop: {
 
   },
 
   // =========================
-  // TICKET SYSTEM
+  // نظام التذاكر
   // =========================
   tickets: {
-    // Category ID where new tickets are created (null = no forced category).
+    // معرف الفئة حيث تُنشأ التذاكر الجديدة (null = بدون فئة إجبارية).
     defaultCategory: null,
 
-    // Role IDs allowed to manage/support tickets.
+    // معرفات الأدوار المسموح لها بإدارة/دعم التذاكر.
     supportRoles: [],
 
-    // Priority options users/staff can assign.
+    // خيارات الأولوية التي يمكن للمستخدمين/الطاقم تعيينها.
     priorities: {
       none: {
         emoji: "⚪",
         color: "#95A5A6",
-        label: "None",
+        label: "بدون",
       },
       low: {
         emoji: "🟢",
         color: "#2ECC71",
-        label: "Low",
+        label: "منخفضة",
       },
       medium: {
         emoji: "🟡",
         color: "#F1C40F",
-        label: "Medium",
+        label: "متوسطة",
       },
       high: {
         emoji: "🔴",
         color: "#E74C3C",
-        label: "High",
+        label: "عالية",
       },
       urgent: {
         emoji: "🚨",
         color: "#E91E63",
-        label: "Urgent",
+        label: "عاجلة",
       },
     },
 
-    // Default priority for new tickets.
+    // الأولوية الافتراضية للتذاكر الجديدة.
     defaultPriority: "none",
 
-    // Category ID where closed tickets are archived.
+    // معرف الفئة حيث تُؤرشف التذاكر المغلقة.
     archiveCategory: null,
 
-    // Channel ID where ticket logs are sent.
+    // معرف القناة حيث تُرسل سجلات التذاكر.
     logChannel: null,
   },
 
   // =========================
-  // GIVEAWAY SETTINGS
+  // إعدادات الهدايا
   // =========================
   giveaways: {
-    // Default giveaway duration in milliseconds.
-    // 86400000 = 24 hours.
+    // المدة الافتراضية للهدايا بالملي ثانية.
+    // 86400000 = 24 ساعة.
     defaultDuration: 86400000,
 
-    // Allowed winner count range.
+    // نطاق عدد الفائزين المسموح به.
     minimumWinners: 1,
     maximumWinners: 10,
 
-    // Allowed giveaway duration range in milliseconds.
-    // 300000 = 5 minutes.
+    // نطاق مدة الهدايا المسموح به بالملي ثانية.
+    // 300000 = 5 دقائق.
     minimumDuration: 300000,
-    // 2592000000 = 30 days.
+    // 2592000000 = 30 يوماً.
     maximumDuration: 2592000000,
 
-    // Role IDs allowed to host giveaways.
+    // معرفات الأدوار المسموح لها بإجراء الهدايا.
     allowedRoles: [],
 
-    // Role IDs that bypass giveaway restrictions.
+    // معرفات الأدوار التي تتجاوز قيود الهدايا.
     bypassRoles: [],
   },
 
   // =========================
-  // BIRTHDAY SETTINGS
+  // إعدادات أعياد الميلاد
   // =========================
   birthday: {
-    // Role ID given to users on their birthday.
+    // معرف الدور الممنوح للمستخدمين في عيد ميلادهم.
     defaultRole: null,
 
-    // Channel ID where birthday announcements are posted.
+    // معرف القناة حيث تُنشر إعلانات أعياد الميلاد.
     announcementChannel: null,
 
-    // Timezone used to calculate birthday dates.
+    // المنطقة الزمنية المستخدمة لحساب تواريخ أعياد الميلاد.
     timezone: "UTC",
   },
 
   // =========================
-  // VERIFICATION SETTINGS
+  // إعدادات التحقق
   // =========================
   verification: {
-    // Message shown when posting the verification panel.
-    defaultMessage: "Click the button below to verify yourself and gain access to the server!",
+    // الرسالة المعروضة عند نشر لوحة التحقق.
+    defaultMessage: "اضغط على الزر أدناه للتحقق من نفسك والحصول على صلاحية الوصول إلى السيرفر!",
 
-    // Text on the verification button.
-    defaultButtonText: "Verify",
+    // النص على زر التحقق.
+    defaultButtonText: "تحقق",
 
-    // Automatic verification behavior.
+    // سلوك التحقق التلقائي.
     autoVerify: {
-      // How automatic verification decides who is auto-approved:
-      // - "none"        = everyone is auto-verified immediately
-      // - "account_age" = account must be older than set days
-      // - "server_size" = auto-verify everyone only in smaller servers
+      // كيف يقرر التحقق التلقائي من يتم الموافقة عليه تلقائياً:
+      // - "none"        = الجميع يتم التحقق منهم فوراً
+      // - "account_age" = يجب أن يكون الحساب أقدم من الأيام المحددة
+      // - "server_size" = التحقق التلقائي من الجميع فقط في السيرفرات الأصغر
       defaultCriteria: "none",
 
-      // Days used when `defaultCriteria` is `account_age`.
+      // الأيام المستخدمة عندما يكون `defaultCriteria` هو `account_age`.
       defaultAccountAgeDays: 7,
 
-      // Member count threshold used when `defaultCriteria` is `server_size`.
-      // Example: 1000 means auto-verify if server has fewer than 1000 members.
+      // عتبة عدد الأعضاء المستخدمة عندما يكون `defaultCriteria` هو `server_size`.
+      // مثال: 1000 يعني التحقق التلقائي إذا كان السيرفر يحتوي على أقل من 1000 عضو.
       serverSizeThreshold: 1000,
 
-      // Allowed safety limits for account-age requirements.
-      // 1 = minimum day, 365 = maximum days.
+      // حدود السلامة المسموح بها لمتطلبات عمر الحساب.
+      // 1 = الحد الأدنى لليوم، 365 = الحد الأقصى للأيام.
       minAccountAge: 1,
       maxAccountAge: 365,
 
-      // If true, user receives a DM after verification.
+      // إذا كان true، يتلقى المستخدم رسالة خاصة بعد التحقق.
       sendDMNotification: true,
 
-      // Human-readable descriptions for each criteria mode.
+      // أوصاف قابلة للقراءة البشرية لكل وضع معايير.
       criteria: {
-        account_age: "Account must be older than specified days",
-        server_size: "All users if server has less than 1000 members",
-        none: "All users immediately"
+        account_age: "يجب أن يكون الحساب أقدم من الأيام المحددة",
+        server_size: "جميع المستخدمين إذا كان السيرفر يحتوي على أقل من 1000 عضو",
+        none: "جميع المستخدمين فوراً"
       }
     },
 
-    // Minimum time between verification attempts (milliseconds).
-    // 5000 = 5 seconds.
+    // الحد الأدنى للوقت بين محاولات التحقق (بالملي ثانية).
+    // 5000 = 5 ثوانٍ.
     verificationCooldown: 5000,
 
-    // Maximum failed attempts allowed inside the time window below.
+    // الحد الأقصى للمحاولات الفاشلة المسموح بها في نافذة الوقت أدناه.
     maxVerificationAttempts: 3,
 
-    // Time window for counting attempts (milliseconds).
-    // 60000 = 1 minute.
+    // نافذة الوقت لحساب المحاولات (بالملي ثانية).
+    // 60000 = 1 دقيقة.
     attemptWindow: 60000,
 
-    // In-memory safety limits (helps avoid unbounded memory growth).
+    // حدود السلامة في الذاكرة (تساعد في تجنب نمو الذاكرة غير المحدود).
     maxCooldownEntries: 10000,
     maxAttemptEntries: 10000,
-    // Cleanup frequency for cooldown/attempt maps (milliseconds).
-    // 300000 = 5 minutes.
+    // تكرار تنظيف خرائط فترات التبريد/المحاولات (بالملي ثانية).
+    // 300000 = 5 دقائق.
     cooldownCleanupInterval: 300000,
-    // Maximum metadata payload size for audit entries (bytes).
+    // الحجم الأقصى لبيانات التعريف لإدخالات التدقيق (بالبايت).
     maxAuditMetadataBytes: 4096,
-    // Maximum number of audit entries kept in memory.
+    // الحد الأقصى لعدد إدخالات التدقيق المحفوظة في الذاكرة.
     maxInMemoryAuditEntries: 1000,
-    // If true, log every verification action.
+    // إذا كان true، سجّل كل إجراء تحقق.
     logAllVerifications: true,
-    // If true, preserve verification audit history.
+    // إذا كان true، احتفظ بسجل تدقيق التحقق.
     keepAuditTrail: true,
   },
 
   // =========================
-  // WELCOME / GOODBYE MESSAGES
+  // رسائل الترحيب / الوداع
   // =========================
   welcome: {
-    // Welcome template posted when a user joins.
-    // Placeholders: {user}, {server}, {memberCount}
+    // قالب الترحيب المنشور عند انضمام مستخدم.
+    // العناصر النائبة: {user}, {server}, {memberCount}
     defaultWelcomeMessage:
-      "Welcome {user} to {server}! We now have {memberCount} members!",
-    // Goodbye template posted when a user leaves.
-    // Placeholders: {user}, {memberCount}
+      "أهلاً بك {user} في {server}! أصبح لدينا الآن {memberCount} عضو!",
+    // قالب الوداع المنشور عند مغادرة مستخدم.
+    // العناصر النائبة: {user}, {memberCount}
     defaultGoodbyeMessage:
-      "{user} has left the server. We now have {memberCount} members.",
-    // Channel ID for welcome messages.
+      "غادر {user} السيرفر. أصبح لدينا الآن {memberCount} عضو.",
+    // معرف القناة لرسائل الترحيب.
     defaultWelcomeChannel: null,
-    // Channel ID for goodbye messages.
+    // معرف القناة لرسائل الوداع.
     defaultGoodbyeChannel: null,
   },
 
   // =========================
-  // COUNTER CHANNELS
+  // قنوات العدادات
   // =========================
   counters: {
     defaults: {
-      // Default naming/description templates for counter entries.
-      name: "{name} Counter",
-      description: "Server {name} counter",
-      // Channel type used for counters (typically "voice").
+      // قوالب التسمية/الوصف الافتراضية لإدخالات العداد.
+      name: "عداد {name}",
+      description: "عداد {name} في السيرفر",
+      // نوع القناة المستخدم للعدادات (عادةً "voice").
       type: "voice",
-      // Channel name format. `{count}` is replaced automatically.
+      // تنسيق اسم القناة. يتم استبدال `{count}` تلقائياً.
       channelName: "{name}-{count}",
     },
     permissions: {
-      // Default denied permissions for the counter channel.
+      // الصلاحيات المرفوضة افتراضياً لقناة العداد.
       deny: ["VIEW_CHANNEL"],
-      // Default allowed permissions for the counter channel.
+      // الصلاحيات المسموح بها افتراضياً لقناة العداد.
       allow: ["VIEW_CHANNEL", "CONNECT", "SPEAK"],
     },
     messages: {
-      // Default response messages for counter actions.
-      created: "✅ Created counter **{name}**",
-      deleted: "🗑️ Deleted counter **{name}**",
-      updated: "🔄 Updated counter **{name}**",
+      // رسائل الاستجابة الافتراضية لإجراءات العداد.
+      created: "✅ تم إنشاء العداد **{name}**",
+      deleted: "🗑️ تم حذف العداد **{name}**",
+      updated: "🔄 تم تحديث العداد **{name}**",
     },
     types: {
-      // Built-in counter types and how each count is calculated.
+      // أنواع العدادات المدمجة وكيفية حساب كل عدد.
       members: {
-        name: "👥 Members",
-        description: "Total members in the server",
+        name: "👥 الأعضاء",
+        description: "إجمالي الأعضاء في السيرفر",
         getCount: (guild) => guild.memberCount.toString(),
       },
       bots: {
-        name: "🤖 Bots",
-        description: "Total bot accounts in the server",
+        name: "🤖 البوتات",
+        description: "إجمالي حسابات البوتات في السيرفر",
         getCount: (guild) =>
           guild.members.cache.filter((m) => m.user.bot).size.toString(),
       },
       members_only: {
-        name: "👤 Humans",
-        description: "Total human members (non-bots)",
+        name: "👤 البشر",
+        description: "إجمالي الأعضاء البشر (غير البوتات)",
         getCount: (guild) =>
           guild.members.cache.filter((m) => !m.user.bot).size.toString(),
       },
@@ -431,42 +431,42 @@ export const botConfig = {
   },
 
   // =========================
-  // GENERIC BOT MESSAGES
+  // رسائل البوت العامة
   // =========================
   messages: {
-    noPermission: "You do not have permission to use this command.",
-    cooldownActive: "Please wait {time} before using this command again.",
-    errorOccurred: "An error occurred while executing this command.",
+    noPermission: "ليس لديك صلاحية لاستخدام هذا الأمر.",
+    cooldownActive: "يرجى الانتظار {time} قبل استخدام هذا الأمر مرة أخرى.",
+    errorOccurred: "حدث خطأ أثناء تنفيذ هذا الأمر.",
     missingPermissions:
-      "I am missing required permissions to perform this action.",
-    commandDisabled: "This command has been disabled.",
-    maintenanceMode: "The bot is currently in maintenance mode.",
+      "أفتقر إلى الصلاحيات المطلوبة لأداء هذا الإجراء.",
+    commandDisabled: "تم تعطيل هذا الأمر.",
+    maintenanceMode: "البوت في وضع الصيانة حالياً.",
   },
 
   // =========================
-  // FEATURE TOGGLES
+  // تبديل الميزات
   // =========================
-  // Set any feature to `false` to disable it globally.
+  // عيّن أي ميزة إلى `false` لتعطيلها عالمياً.
   features: {
-    // Core systems.
+    // الأنظمة الأساسية.
     economy: true,
     leveling: true,
     moderation: true,
     logging: true,
     welcome: true,
 
-    // Community engagement systems.
+    // أنظمة تفاعل المجتمع.
     tickets: true,
     giveaways: true,
     birthday: true,
     counter: true,
 
-    // Security and self-service systems.
+    // أنظمة الأمان والخدمة الذاتية.
     verification: true,
     reactionRoles: true,
     joinToCreate: true,
 
-    // Utility/quality-of-life modules.
+    // وحدات الأدوات/جودة الحياة.
     voice: true,
     search: true,
     tools: true,
@@ -481,37 +481,37 @@ export function validateConfig(config) {
   const errors = [];
 
   if (process.env.NODE_ENV !== 'production') {
-    logger.debug('Environment variables check:');
-    logger.debug('DISCORD_TOKEN exists:', !!process.env.DISCORD_TOKEN);
-    logger.debug('TOKEN exists:', !!process.env.TOKEN);
-    logger.debug('CLIENT_ID exists:', !!process.env.CLIENT_ID);
-    logger.debug('GUILD_ID exists:', !!process.env.GUILD_ID);
-    logger.debug('POSTGRES_HOST exists:', !!process.env.POSTGRES_HOST);
+    logger.debug('فحص متغيرات البيئة:');
+    logger.debug('DISCORD_TOKEN موجود:', !!process.env.DISCORD_TOKEN);
+    logger.debug('TOKEN موجود:', !!process.env.TOKEN);
+    logger.debug('CLIENT_ID موجود:', !!process.env.CLIENT_ID);
+    logger.debug('GUILD_ID موجود:', !!process.env.GUILD_ID);
+    logger.debug('POSTGRES_HOST موجود:', !!process.env.POSTGRES_HOST);
     logger.debug('NODE_ENV:', process.env.NODE_ENV);
   }
 
   if (!process.env.DISCORD_TOKEN && !process.env.TOKEN) {
-    errors.push("Bot token is required (DISCORD_TOKEN or TOKEN environment variable)");
+    errors.push("رمز البوت مطلوب (متغير البيئة DISCORD_TOKEN أو TOKEN)");
   }
 
   if (!process.env.CLIENT_ID) {
-    errors.push("Client ID is required (CLIENT_ID environment variable)");
+    errors.push("معرف العميل مطلوب (متغير البيئة CLIENT_ID)");
   }
 
   if (process.env.NODE_ENV === 'production') {
-    // A full connection URL (DATABASE_URL / POSTGRES_URL) satisfies all Postgres
-    // requirements, matching how src/config/database/postgres.js resolves the pool config.
+    // رابط اتصال كامل (DATABASE_URL / POSTGRES_URL) يفي بجميع متطلبات
+    // Postgres، مطابقاً لكيفية حل تكوين المجموعة في src/config/database/postgres.js.
     const hasConnectionUrl = Boolean(process.env.POSTGRES_URL || process.env.DATABASE_URL);
 
     if (!hasConnectionUrl) {
       if (!process.env.POSTGRES_HOST) {
-        errors.push("PostgreSQL connection is required in production (set DATABASE_URL/POSTGRES_URL, or POSTGRES_HOST)");
+        errors.push("اتصال PostgreSQL مطلوب في بيئة الإنتاج (عيّن DATABASE_URL/POSTGRES_URL، أو POSTGRES_HOST)");
       }
       if (!process.env.POSTGRES_USER) {
-        errors.push("PostgreSQL user is required in production (set DATABASE_URL/POSTGRES_URL, or POSTGRES_USER)");
+        errors.push("مستخدم PostgreSQL مطلوب في بيئة الإنتاج (عيّن DATABASE_URL/POSTGRES_URL، أو POSTGRES_USER)");
       }
       if (!process.env.POSTGRES_PASSWORD) {
-        errors.push("PostgreSQL password is required in production (set DATABASE_URL/POSTGRES_URL, or POSTGRES_PASSWORD)");
+        errors.push("كلمة مرور PostgreSQL مطلوبة في بيئة الإنتاج (عيّن DATABASE_URL/POSTGRES_URL، أو POSTGRES_PASSWORD)");
       }
     }
   }
@@ -521,7 +521,7 @@ export function validateConfig(config) {
 
 const configErrors = validateConfig(botConfig);
 if (configErrors.length > 0) {
-  logger.error("Bot configuration errors:", configErrors.join("\n"));
+  logger.error("أخطاء في تكوين البوت:", configErrors.join("\n"));
   if (process.env.NODE_ENV === "production") {
     process.exit(1);
   }
