@@ -181,7 +181,7 @@ function buildSelectMenu(guildId) {
         .addOptions(
             new StringSelectMenuOptionBuilder()
                 .setLabel('رسالة لوحة التحرير')
-                .setDescription('قم بتغيير الرسالة المعروضة في لوحة إنشاء التذاكر')
+                .setDescription('قم بتغيير الرسالة المعروضة في لوحة إنشاء التكت')
                 .setValue('panel_message')
                 .setEmoji('📝'),
             new StringSelectMenuOptionBuilder()
@@ -337,7 +337,7 @@ export default {
             throw new TitanBotError(
                 `فشل إعداد التذكرة: ${error.message}`,
                 ErrorTypes.UNKNOWN,
-                'فشل فتح لوحة تحكم إعدادات التذاكر.',
+                'فشل فتح لوحة تحكم إعدادات التكت.',
             );
         }
     },
@@ -441,7 +441,7 @@ async function handleButtonLabel(selectInteraction, rootInteraction, guildConfig
                 '✅ تم تحديث تسمية الزر',
                 `تم تغيير تسمية الزر إلى \`${newLabel}\`.${
                     panelUpdated
-                        ? '\nتم تحديث زر لوحة التذاكر المباشرة أيضاً.'
+                        ? '\nتم تحديث زر لوحة التكت المباشرة أيضاً.'
                         : '\n> **ملاحظة:** تعذر العثور على لوحة التحكم المباشرة. استخدم **إعادة نشر اللوحة** في لوحة التحكم لاستعادتها.'
                 }`,
             ),
@@ -467,7 +467,7 @@ async function handleStaffRole(selectInteraction, rootInteraction, guildConfig, 
             new EmbedBuilder()
                 .setTitle('🛡️ تغيير دور الموظفين')
                 .setDescription(
-                    `**حاضِر:** ${guildConfig.ticketStaffRoleId ? `<@&${guildConfig.ticketStaffRoleId}>` : '`غير محدد`'}\n\nحدد الدور الذي يجب أن يتمتع بصلاحية وصول الموظفين لإدارة التذاكر.`,
+                    `**حاضِر:** ${guildConfig.ticketStaffRoleId ? `<@&${guildConfig.ticketStaffRoleId}>` : '`غير محدد`'}\n\nحدد الدور الذي يجب أن يتمتع بصلاحية وصول الموظفين لإدارة التكت.`,
                 )
                 .setColor(getColor('info')),
         ],
@@ -522,7 +522,7 @@ async function handleOpenCategory(selectInteraction, rootInteraction, guildConfi
             new EmbedBuilder()
                 .setTitle('📁 تغيير فئة التكت المفتوحة')
                 .setDescription(
-                    `**حاضِر:** ${guildConfig.ticketCategoryId ? `<#${guildConfig.ticketCategoryId}>` : '`غير محدد`'}\n\nحدد الفئة التي سيتم فيها إنشاء التذاكر الجديدة.`,
+                    `**حاضِر:** ${guildConfig.ticketCategoryId ? `<#${guildConfig.ticketCategoryId}>` : '`غير محدد`'}\n\nحدد الفئة التي سيتم فيها إنشاء التكت الجديدة.`,
                 )
                 .setColor(getColor('info')),
         ],
@@ -582,7 +582,7 @@ async function handleClosedCategory(selectInteraction, rootInteraction, guildCon
             new EmbedBuilder()
                 .setTitle('📂 تغيير فئة التكت المغلقة')
                 .setDescription(
-                    `**حاضِر:** ${guildConfig.ticketClosedCategoryId ? `<#${guildConfig.ticketClosedCategoryId}>` : '`غير مُحدد`'}\n\nحدد الفئة التي سيتم نقل التذاكر المغلقة إليها.`,
+                    `**حاضِر:** ${guildConfig.ticketClosedCategoryId ? `<#${guildConfig.ticketClosedCategoryId}>` : '`غير مُحدد`'}\n\nحدد الفئة التي سيتم نقل التكت المغلقة إليها.`,
                 )
                 .setColor(getColor('info')),
         ],
