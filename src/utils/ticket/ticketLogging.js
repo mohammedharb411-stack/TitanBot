@@ -13,7 +13,7 @@ export async function logTicketEvent({ client, guildId, event }) {
   try {
     const guild = client.guilds.cache.get(guildId) || await client.guilds.fetch(guildId).catch(() => null);
     if (!guild) {
-      logger.warn(`logTicketEvent invoked without valid guild: ${guildId}`);
+      logger.warn(`تم استدعاء logTicketEvent بدون سيرفر صالح: ${guildId}`);
       return;
     }
 
@@ -26,13 +26,13 @@ export async function logTicketEvent({ client, guildId, event }) {
 
     const channel = guild.channels.cache.get(logChannelId) || await guild.channels.fetch(logChannelId).catch(() => null);
     if (!channel) {
-      logger.warn(`Ticket log channel not found: ${logChannelId} for event type: ${event.type}`);
+      logger.warn(`قناة سجل التكت غير موجودة: ${logChannelId} لنوع الحدث: ${event.type}`);
       return;
     }
 
     const permissions = channel.permissionsFor(guild.members.me);
     if (!permissions.has(['SendMessages', 'EmbedLinks'])) {
-      logger.warn(`Missing permissions in ticket log channel: ${logChannelId}`);
+      logger.warn(`صلاحيات ناقصة في قناة سجل التكت: ${logChannelId}`);
       return;
     }
 
@@ -45,9 +45,9 @@ export async function logTicketEvent({ client, guildId, event }) {
     }
 
     await channel.send(messageOptions);
-    logger.info(`Ticket event logged: ${event.type} in guild ${guildId}`);
+    logger.info(`تم تسجيل حدث التذكرة: ${event.type} في السيرفر ${guildId}`);
   } catch (error) {
-    logger.error('Error logging ticket event:', error);
+    logger.error('خطأ في تسجيل حدث التذكرة:', error);
   }
 }
 
@@ -98,20 +98,20 @@ function getLogChannelForEventType(config, eventType) {
 }
 
 const TICKET_EVENT_STYLES = {
-  open: { color: 0x5865F2, title: 'Ticket Created' },
-  close: { color: 0xED4245, title: 'Ticket Closed' },
-  delete: { color: 0x8b0000, title: 'Ticket Deleted' },
-  claim: { color: 0x5865F2, title: 'Ticket Claimed' },
-  unclaim: { color: 0xFAA61A, title: 'Ticket Unclaimed' },
-  priority: { color: 0x9b59b6, title: 'Priority Updated' },
-  transcript: { color: 0x57F287, title: 'Transcript Generated' },
-  feedback: { color: 0x57F287, title: 'Feedback Received' },
+  open: { color: 0x5865F2, title: 'تم إنشاء التذكرة' },
+  close: { color: 0xED4245, title: 'تم إغلاق التذكرة' },
+  delete: { color: 0x8b0000, title: 'تم حذف التذكرة' },
+  claim: { color: 0x5865F2, title: 'تم استلام التذكرة' },
+  unclaim: { color: 0xFAA61A, title: 'تم إلغاء استلام التذكرة' },
+  priority: { color: 0x9b59b6, title: 'تم تحديث الأولوية' },
+  transcript: { color: 0x57F287, title: 'تم إنشاء النسخة' },
+  feedback: { color: 0x57F287, title: 'تم استلام التقييم' },
 };
 
 async function createTicketLogEmbed(guild, event) {
-  const style = TICKET_EVENT_STYLES[event.type] || { color: 0x95a5a6, title: 'Ticket Event' };
+  const style = TICKET_EVENT_STYLES[event.type] || { color: 0x95a5a6, title: 'حدث التذكرة' };
   const ticketNumber = event.ticketNumber || event.ticketId;
-  const ticketRef = ticketNumber ? `#${ticketNumber}` : 'Unknown';
+  const ticketRef = ticketNumber ? `#${ticketNumber}` : 'غير معروف';
   const channelMention = event.ticketId ? `<#${event.ticketId}>` : null;
   const executorMention = event.executorId ? `<@${event.executorId}>` : null;
   const userMention = event.userId ? `<@${event.userId}>` : null;
@@ -119,42 +119,42 @@ async function createTicketLogEmbed(guild, event) {
   let inlineFields = [];
   let fields = [];
   let author = null;
-  let footer = { text: 'TitanBot Ticketing' };
+  let footer = { text: 'نظام تذاكر TitanBot' };
 
   switch (event.type) {
     case 'open':
       author = await resolveUserAuthor(guild.client, event.userId);
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
-        { name: 'Creator', value: userMention || 'Unknown', inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'المنشئ', value: userMention || 'غير معروف', inline: true },
       ];
       if (channelMention) {
-        inlineFields.push({ name: 'Channel', value: channelMention, inline: true });
+        inlineFields.push({ name: 'القناة', value: channelMention, inline: true });
       }
       if (event.reason) {
-        fields.push({ name: 'Reason', value: String(event.reason).slice(0, 1024), inline: false });
+        fields.push({ name: 'السبب', value: String(event.reason).slice(0, 1024), inline: false });
       }
       break;
 
     case 'close':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
-        { name: 'Closed by', value: executorMention || 'Unknown', inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'أغلقها', value: executorMention || 'غير معروف', inline: true },
       ];
       if (channelMention) {
-        inlineFields.push({ name: 'Channel', value: channelMention, inline: true });
+        inlineFields.push({ name: 'القناة', value: channelMention, inline: true });
       }
       if (event.reason) {
-        fields.push({ name: 'Reason', value: String(event.reason).slice(0, 1024), inline: false });
+        fields.push({ name: 'السبب', value: String(event.reason).slice(0, 1024), inline: false });
       }
       break;
 
     case 'delete':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
-        { name: 'Deleted by', value: executorMention || 'Unknown', inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'حذفها', value: executorMention || 'غير معروف', inline: true },
       ];
       break;
 
@@ -162,10 +162,10 @@ async function createTicketLogEmbed(guild, event) {
     case 'unclaim':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
         {
-          name: event.type === 'claim' ? 'Claimed by' : 'Unclaimed by',
-          value: executorMention || 'Unknown',
+          name: event.type === 'claim' ? 'استلمها' : 'ألغى استلامها',
+          value: executorMention || 'غير معروف',
           inline: true,
         },
       ];
@@ -175,30 +175,30 @@ async function createTicketLogEmbed(guild, event) {
       const priorityEmojis = { none: '⚪', low: '🔵', medium: '🟢', high: '🟡', urgent: '🔴' };
       const priorityLabel = event.priority
         ? `${priorityEmojis[event.priority] || '⚪'} ${event.priority.charAt(0).toUpperCase()}${event.priority.slice(1)}`
-        : 'Unknown';
+        : 'غير معروف';
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
-        { name: 'Priority', value: priorityLabel, inline: true },
-        { name: 'Updated by', value: executorMention || 'Unknown', inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'الأولوية', value: priorityLabel, inline: true },
+        { name: 'حدّثها', value: executorMention || 'غير معروف', inline: true },
       ];
       break;
     }
 
     case 'transcript':
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
-        { name: 'Creator', value: userMention || 'Unknown', inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'المنشئ', value: userMention || 'غير معروف', inline: true },
       ];
       if (event.metadata?.messageCount) {
-        inlineFields.push({ name: 'Messages', value: String(event.metadata.messageCount), inline: true });
+        inlineFields.push({ name: 'الرسائل', value: String(event.metadata.messageCount), inline: true });
       }
       if (event.metadata?.duration) {
-        fields.push({ name: 'Duration', value: String(event.metadata.duration), inline: false });
+        fields.push({ name: 'المدة', value: String(event.metadata.duration), inline: false });
       }
       if (event.metadata?.subject || event.reason) {
         fields.push({
-          name: 'Subject',
+          name: 'الموضوع',
           value: String(event.metadata?.subject || event.reason).slice(0, 1024),
           inline: false,
         });
@@ -208,17 +208,17 @@ async function createTicketLogEmbed(guild, event) {
     case 'feedback': {
       const rating = event.metadata?.rating ?? event.rating;
       const comment = event.metadata?.comment;
-      const ratingDisplay = formatRatingStars(rating) || 'No rating';
+      const ratingDisplay = formatRatingStars(rating) || 'بدون تقييم';
 
       author = await resolveUserAuthor(guild.client, event.userId);
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
-        { name: 'Rating', value: ratingDisplay, inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التقييم', value: ratingDisplay, inline: true },
       ];
 
       if (comment) {
         fields.push({
-          name: 'Comment',
+          name: 'التعليق',
           value: String(comment).slice(0, 1024),
           inline: false,
         });
@@ -228,10 +228,10 @@ async function createTicketLogEmbed(guild, event) {
 
     default:
       inlineFields = [
-        { name: 'Ticket', value: ticketRef, inline: true },
+        { name: 'التذكرة', value: ticketRef, inline: true },
       ];
       if (event.reason) {
-        fields.push({ name: 'Details', value: String(event.reason).slice(0, 1024), inline: false });
+        fields.push({ name: 'التفاصيل', value: String(event.reason).slice(0, 1024), inline: false });
       }
   }
 
@@ -259,7 +259,7 @@ export function validateLogChannel(channel, botMember) {
   if (!channel || channel.type !== ChannelType.GuildText) {
     return {
       valid: false,
-      error: 'Channel must be a text channel.',
+      error: 'يجب أن تكون القناة قناة نصية.',
     };
   }
 
@@ -271,10 +271,9 @@ export function validateLogChannel(channel, botMember) {
   if (missing.length > 0) {
     return {
       valid: false,
-      error: `Missing permissions: ${missing.join(', ')}`,
+      error: `صلاحيات ناقصة: ${missing.join(', ')}`,
     };
   }
 
   return { valid: true };
 }
-
