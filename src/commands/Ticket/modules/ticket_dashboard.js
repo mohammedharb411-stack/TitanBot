@@ -335,7 +335,7 @@ export default {
             if (error instanceof TitanBotError) throw error;
             logger.error('خطأ غير متوقع في ملف ticket_config:', error);
             throw new TitanBotError(
-                `فشل إعداد التذكرة: ${error.message}`,
+                `فشل إعداد التكت: ${error.message}`,
                 ErrorTypes.UNKNOWN,
                 'فشل فتح لوحة تحكم إعدادات التكت.',
             );
