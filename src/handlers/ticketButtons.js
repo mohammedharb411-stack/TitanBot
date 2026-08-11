@@ -172,7 +172,7 @@ const createTicketModalHandler = {
       await interaction.editReply({
         embeds: [successEmbed(
           'تم إنشاء التكت',
-          `تم إنشاء تذكرتك في ${channel}!`
+          `تم إنشاء تكتك في ${channel}!`
         )]
       });
     } catch (error) {
