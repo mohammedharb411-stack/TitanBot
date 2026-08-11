@@ -9,7 +9,7 @@ import { claimTicket } from '../../services/ticket.js';
 export default {
     data: new SlashCommandBuilder()
         .setName("claim")
-        .setDescription("يقوم هذا الإجراء باستلام تذكرة مفتوحة، ثم يسندها إليك..")
+        .setDescription("يقوم هذا الإجراء باستلام تكت مفتوحة، ثم يسندها إليك..")
         .setDMPermission(false),
 
     async execute(interaction, guildConfig, client) {
