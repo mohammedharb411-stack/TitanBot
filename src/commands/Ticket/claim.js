@@ -24,7 +24,7 @@ export default {
         }
 
         if (!permissionContext.canManageTicket) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'أنت بحاجة إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن للمطالبة بالتكت التذاكر.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'أنت بحاجة إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن للمطالبة بالتكت التكت.' });
         }
 
         await claimTicket(interaction.channel, interaction.user);
@@ -38,7 +38,7 @@ export default {
             ],
         });
 
-        logger.info('تم استلام التكت بنجاح', {
+        logger.info('تم استلام التذكرة بنجاح', {
             userId: interaction.user.id,
             userTag: interaction.user.tag,
             channelId: interaction.channel.id,
