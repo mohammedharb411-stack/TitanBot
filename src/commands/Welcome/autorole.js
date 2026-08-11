@@ -16,12 +16,12 @@ function createAutoroleInfoEmbed(description) {
 export default {
     data: new SlashCommandBuilder()
         .setName('autorole')
-        .setDescription('Manage roles that are automatically assigned to new members')
+        .setDescription('إدارة الأدوار التي يتم تعيينها تلقائيًا للأعضاء الجدد')
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
         .addSubcommand(subcommand =>
             subcommand
                 .setName('add')
-                .setDescription('Add a role to be automatically assigned to new members')
+                .setDescription('أضف دورًا ليتم تعيينه تلقائيًا للأعضاء الجدد')
                 .addRoleOption(option =>
                     option.setName('role')
                         .setDescription('The role to add')
@@ -29,29 +29,29 @@ export default {
         .addSubcommand(subcommand =>
             subcommand
                 .setName('remove')
-                .setDescription('Remove a role from auto-assignment')
+                .setDescription('إزالة دور من التعيين التلقائي')
                 .addRoleOption(option =>
                     option.setName('role')
-                        .setDescription('The role to remove')
+                        .setDescription('الدور الذي يجب إزالته')
                         .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
                 .setName('list')
-                .setDescription('List all auto-assigned roles')),
+                .setDescription('اذكر جميع الأدوار المعينة تلقائيًا')),
 
     async execute(interaction) {
         const deferSuccess = await InteractionHelper.safeDefer(interaction);
         if (!deferSuccess) {
-            logger.warn(`Autorole interaction defer failed`, {
+            logger.warn(`فشل تأجيل تفاعل الدور الذاتي`, {
                 userId: interaction.user.id,
                 guildId: interaction.guildId,
-                commandName: 'autorole'
+                commandName: 'أوتورو'
             });
             return;
         }
 
         if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the **Manage Server** permission to use `/autorole`.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'أنت بحاجة إلى إذن **إدارة الخادم** لاستخدام `/autorole`.' });
         }
 
     const { options, guild, client } = interaction;
@@ -65,12 +65,12 @@ export default {
             const autoVerifyEnabled = Boolean(guildConfig.verification?.autoVerify?.enabled);
 
             if (verificationEnabled || autoVerifyEnabled) {
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'You cannot add AutoRole while the verification system or AutoVerify is enabled. Disable those first.' });
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لا يمكنك إضافة AutoRole أثناء تفعيل نظام التحقق أو AutoVerify. قم بتعطيلهما أولاً.' });
             }
             
             if (role.position >= guild.members.me.roles.highest.position) {
-                logger.warn(`[Autorole] User ${interaction.user.tag} tried to add role ${role.name} (${role.id}) higher than bot's highest role in ${guild.name}`);
-                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'I can\'t assign roles that are higher than my highest role.' });
+                logger.warn(`[دور تلقائي] المستخدم ${interaction.user.tag} حاولت إضافة دور ${role.name} (${role.id}) أعلى من أعلى دور للروبوت في${guild.name}`);
+                return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'أنا استطيع\'t تعيين أدوار أعلى من أعلى دور لي.' });
             }
 
             try {
@@ -79,26 +79,26 @@ export default {
                 const currentRoleId = existingRoles[0] || null;
 
                 if (currentRoleId === role.id) {
-                    logger.info(`[Autorole] User ${interaction.user.tag} tried to add duplicate role ${role.name} (${role.id}) in ${guild.name}`);
-                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `The role ${role} is already set to be auto-assigned.` });
+                    logger.info(`[دور تلقائي] المستخدم ${interaction.user.tag} محاولة إضافة دور مكرر ${role.name} (${role.id}) في ${guild.name}`);
+                    return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: `الدور ${role} تم بالفعل ضبطها على التعيين التلقائي.` });
                 }
 
                 await updateWelcomeConfig(client, guild.id, {
                     roleIds: [role.id]
                 });
 
-                logger.info(`[Autorole] Set single auto-role to ${role.name} (${role.id}) in ${guild.name} by ${interaction.user.tag}`);
+                logger.info(`[الدور التلقائي] اضبط الدور التلقائي الفردي على ${role.name} (${role.id}) في ${guild.name} by ${interaction.user.tag}`);
                 await InteractionHelper.safeEditReply(interaction, {
                     embeds: [createAutoroleInfoEmbed(
                         currentRoleId
-                            ? `✅ Auto-role updated to ${role}. Only one auto-role is allowed.`
-                            : `✅ Auto-role set to ${role}.`
+                            ? `✅ تم تحديث دور تلقائي إلى ${role}. يُسمح بدوران تلقائي واحد فقط.`
+                            : `✅ تم ضبط خاصية الدوران التلقائي على ${role}.`
                     )],
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
-                logger.error(`[Autorole] Failed to add role for guild ${guild.id}:`, error);
-                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while adding the role. Please try again.' });
+                logger.error(`[الدور التلقائي] فشل إضافة دور للنقابة ${guild.id}:`, error);
+                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إضافة الدور. يرجى المحاولة مرة أخرى.' });
             }
         } 
         
@@ -110,8 +110,8 @@ export default {
                 const existingRoles = config.roleIds || [];
                 
                 if (!existingRoles.includes(role.id)) {
-                    logger.info(`[Autorole] User ${interaction.user.tag} tried to remove non-existent role ${role.name} (${role.id}) in ${guild.name}`);
-                    return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `The role ${role} is not set to be auto-assigned.` });
+                    logger.info(`[الدور التلقائي] مستخدم ${interaction.user.tag} محاولة إزالة دور غير موجود ${role.name} (${role.id}) في ${guild.name}`);
+                    return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: `الدور${role} لم يتم ضبطه ليتم تعيينه تلقائيًا.` });
                 }
 
                 const updatedRoles = existingRoles.filter(id => id !== role.id);
@@ -120,14 +120,14 @@ export default {
                     roleIds: updatedRoles
                 });
 
-                logger.info(`[Autorole] Removed role ${role.name} (${role.id}) from auto-assign in ${guild.name} by ${interaction.user.tag}`);
+                logger.info(`[الدور التلقائي] تم حذف الدور ${role.name} (${role.id}) من التعيين التلقائي في ${guild.name} by ${interaction.user.tag}`);
                 await InteractionHelper.safeEditReply(interaction, {
-                    embeds: [createAutoroleInfoEmbed(`✅ Removed ${role} from auto-assigned roles.`)],
+                    embeds: [createAutoroleInfoEmbed(`✅ تمت إزالته ${role} من الأدوار المعينة تلقائياً.`)],
                     flags: MessageFlags.Ephemeral
                 });
             } catch (error) {
-                logger.error(`[Autorole] Failed to remove role for guild ${guild.id}:`, error);
-                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while removing the role. Please try again.' });
+                logger.error(`[الدور التلقائي] فشل في إزالة الدور الخاص بالنقابة ${guild.id}:`, error);
+                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء إزالة الدور. يرجى المحاولة مرة أخرى.' });
             }
         }
         
@@ -137,8 +137,8 @@ export default {
                 const verificationEnabled = Boolean(guildConfig.verification?.enabled);
                 const autoVerifyEnabled = Boolean(guildConfig.verification?.autoVerify?.enabled);
                 const conflictSummary = [
-                    verificationEnabled ? 'Verification system is enabled' : null,
-                    autoVerifyEnabled ? 'AutoVerify is enabled' : null
+                    verificationEnabled ? 'تم تفعيل نظام التحقق' : null,
+                    autoVerifyEnabled ? 'تم تفعيل التحقق التلقائي' : null
                 ].filter(Boolean).join('\n');
 
                 const config = await getWelcomeConfig(client, guild.id);
@@ -149,12 +149,12 @@ export default {
                     await updateWelcomeConfig(client, guild.id, {
                         roleIds: singleRoleIds
                     });
-                    logger.info(`[Autorole] Trimmed auto-role list to one role in ${interaction.guild.name}`);
+                    logger.info(`[الدور التلقائي] تم تقليص قائمة الأدوار التلقائية إلى دور واحد في ${interaction.guild.name}`);
                 }
 
                 if (singleRoleIds.length === 0) {
                     return InteractionHelper.safeEditReply(interaction, {
-                        embeds: [createAutoroleInfoEmbed(`ℹ️ No role is set to be auto-assigned.${conflictSummary ?`\n\n⚠️ Setup blockers:\n${conflictSummary}`: ''}`)],
+                        embeds: [createAutoroleInfoEmbed(`ℹ️ لم يتم تحديد أي دور ليتم تعيينه تلقائياً.${conflictSummary ?`\n\n⚠️ إعداد مانعات الإعداد:\n${conflictSummary}`: ''}`)],
                         flags: MessageFlags.Ephemeral
                     });
                 }
@@ -173,7 +173,7 @@ export default {
                 }
 
                 if (invalidRoleIds.length > 0) {
-                    logger.info(`[Autorole] Cleaning up ${invalidRoleIds.length} invalid role(s) from guild ${interaction.guild.name}`);
+                    logger.info(`[الدور التلقائي] التنظيف${invalidRoleIds.length} أدوار غير صالحة من النقابة ${interaction.guild.name}`);
                     const updatedRoles = singleRoleIds.filter(id => !invalidRoleIds.includes(id));
                     await updateWelcomeConfig(client, guild.id, {
                         roleIds: updatedRoles
@@ -182,16 +182,16 @@ export default {
 
                 if (validRoles.length === 0) {
                     return InteractionHelper.safeEditReply(interaction, {
-                        embeds: [createAutoroleInfoEmbed(`ℹ️ No valid auto-role found. Any invalid role has been removed.${conflictSummary ?`\n\n⚠️ Setup blockers:\n${conflictSummary}`: ''}`)],
+                        embeds: [createAutoroleInfoEmbed(`ℹ️ لم يتم العثور على أي دور تلقائي صالح. تمت إزالة أي دور غير صالح..${conflictSummary ?`\n\n⚠️ إعداد مانعات الإعداد:\n${conflictSummary}`: ''}`)],
                         flags: MessageFlags.Ephemeral
                     });
                 }
 
                 const embed = new EmbedBuilder()
                     .setColor(getColor('info'))
-                    .setTitle('Auto-Assigned Role')
-                    .setDescription(`${validRoles[0]}${conflictSummary ?`\n\n⚠️ Setup blockers:\n${conflictSummary}`: ''}`)
-                    .setFooter({ text: 'Only one auto-role can be configured.' });
+                    .setTitle('الدور المعين تلقائياً')
+                    .setDescription(`${validRoles[0]}${conflictSummary ?`\n\n⚠️ إعداد مانعات الإعداد:\n${conflictSummary}`: ''}`)
+                    .setFooter({ text: 'لا يمكن تهيئة سوى دور تلقائي واحد.' });
 
                 await InteractionHelper.safeEditReply(interaction, {
                     embeds: [embed],
@@ -199,8 +199,8 @@ export default {
                 });
 
             } catch (error) {
-                logger.error(`[Autorole] Failed to list roles for guild ${guild.id}:`, error);
-                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'An error occurred while listing auto-assigned roles. Please try again.' });
+                logger.error(`[الدور التلقائي] فشل في إدراج أدوار النقابة ${guild.id}:`, error);
+                await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'حدث خطأ أثناء عرض قائمة الأدوار المعينة تلقائياً. يرجى المحاولة مرة أخرى.' });
             }
         }
     },
