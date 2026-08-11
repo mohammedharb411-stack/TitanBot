@@ -45,9 +45,9 @@ export async function logTicketEvent({ client, guildId, event }) {
     }
 
     await channel.send(messageOptions);
-    logger.info(`تم تسجيل حدث التذكرة: ${event.type} في السيرفر ${guildId}`);
+    logger.info(`تم تسجيل حدث التكت: ${event.type} في السيرفر ${guildId}`);
   } catch (error) {
-    logger.error('خطأ في تسجيل حدث التذكرة:', error);
+    logger.error('خطأ في تسجيل حدث التكت:', error);
   }
 }
 
@@ -98,18 +98,18 @@ function getLogChannelForEventType(config, eventType) {
 }
 
 const TICKET_EVENT_STYLES = {
-  open: { color: 0x5865F2, title: 'تم إنشاء التذكرة' },
-  close: { color: 0xED4245, title: 'تم إغلاق التذكرة' },
-  delete: { color: 0x8b0000, title: 'تم حذف التذكرة' },
-  claim: { color: 0x5865F2, title: 'تم استلام التذكرة' },
-  unclaim: { color: 0xFAA61A, title: 'تم إلغاء استلام التذكرة' },
+  open: { color: 0x5865F2, title: 'تم إنشاء التكت' },
+  close: { color: 0xED4245, title: 'تم إغلاق التكت' },
+  delete: { color: 0x8b0000, title: 'تم حذف التكت' },
+  claim: { color: 0x5865F2, title: 'تم استلام التكت' },
+  unclaim: { color: 0xFAA61A, title: 'تم إلغاء استلام التكت' },
   priority: { color: 0x9b59b6, title: 'تم تحديث الأولوية' },
   transcript: { color: 0x57F287, title: 'تم إنشاء النسخة' },
   feedback: { color: 0x57F287, title: 'تم استلام التقييم' },
 };
 
 async function createTicketLogEmbed(guild, event) {
-  const style = TICKET_EVENT_STYLES[event.type] || { color: 0x95a5a6, title: 'حدث التذكرة' };
+  const style = TICKET_EVENT_STYLES[event.type] || { color: 0x95a5a6, title: 'حدث التكت' };
   const ticketNumber = event.ticketNumber || event.ticketId;
   const ticketRef = ticketNumber ? `#${ticketNumber}` : 'غير معروف';
   const channelMention = event.ticketId ? `<#${event.ticketId}>` : null;
@@ -119,13 +119,13 @@ async function createTicketLogEmbed(guild, event) {
   let inlineFields = [];
   let fields = [];
   let author = null;
-  let footer = { text: 'نظام تذاكر TitanBot' };
+  let footer = { text: 'نظام تكت TitanBot' };
 
   switch (event.type) {
     case 'open':
       author = await resolveUserAuthor(guild.client, event.userId);
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
         { name: 'المنشئ', value: userMention || 'غير معروف', inline: true },
       ];
       if (channelMention) {
@@ -139,7 +139,7 @@ async function createTicketLogEmbed(guild, event) {
     case 'close':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
         { name: 'أغلقها', value: executorMention || 'غير معروف', inline: true },
       ];
       if (channelMention) {
@@ -153,7 +153,7 @@ async function createTicketLogEmbed(guild, event) {
     case 'delete':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
         { name: 'حذفها', value: executorMention || 'غير معروف', inline: true },
       ];
       break;
@@ -162,7 +162,7 @@ async function createTicketLogEmbed(guild, event) {
     case 'unclaim':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
         {
           name: event.type === 'claim' ? 'استلمها' : 'ألغى استلامها',
           value: executorMention || 'غير معروف',
@@ -178,7 +178,7 @@ async function createTicketLogEmbed(guild, event) {
         : 'غير معروف';
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
         { name: 'الأولوية', value: priorityLabel, inline: true },
         { name: 'حدّثها', value: executorMention || 'غير معروف', inline: true },
       ];
@@ -187,7 +187,7 @@ async function createTicketLogEmbed(guild, event) {
 
     case 'transcript':
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
         { name: 'المنشئ', value: userMention || 'غير معروف', inline: true },
       ];
       if (event.metadata?.messageCount) {
@@ -212,7 +212,7 @@ async function createTicketLogEmbed(guild, event) {
 
       author = await resolveUserAuthor(guild.client, event.userId);
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
         { name: 'التقييم', value: ratingDisplay, inline: true },
       ];
 
@@ -228,7 +228,7 @@ async function createTicketLogEmbed(guild, event) {
 
     default:
       inlineFields = [
-        { name: 'التذكرة', value: ticketRef, inline: true },
+        { name: 'التكت', value: ticketRef, inline: true },
       ];
       if (event.reason) {
         fields.push({ name: 'التفاصيل', value: String(event.reason).slice(0, 1024), inline: false });
