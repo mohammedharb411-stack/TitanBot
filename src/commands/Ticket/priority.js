@@ -39,7 +39,7 @@ export default {
         }
 
         if (!permissionContext.canManageTicket) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'تحتاج إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن لتغيير أولوية التذكرة.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'تحتاج إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن لتغيير أولوية التكت.' });
         }
 
         const priorityLevel = interaction.options.getString("level");
