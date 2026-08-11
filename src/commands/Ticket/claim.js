@@ -38,7 +38,7 @@ export default {
             ],
         });
 
-        logger.info('Ticket claimed successfully', {
+        logger.info('تم استلام التكت بنجاح', {
             userId: interaction.user.id,
             userTag: interaction.user.tag,
             channelId: interaction.channel.id,
