@@ -937,7 +937,7 @@ async function handleDeleteSystem(btnInteraction, rootInteraction, guildConfig, 
 
     const confirmation = submitted.fields.getTextInputValue('delete_confirmation').trim();
 
-    if (confirmation !== 'حذف') {
+    if (confirmation !== 'اه حذف') {
         await replyUserError(submitted, { type: ErrorTypes.UNKNOWN, message: 'يجب عليك كتابة "اه حذف" بالضبط لتأكيد الحذف.' });
         await refreshDashboard(rootInteraction, guildConfig, guildId, client);
         return;
