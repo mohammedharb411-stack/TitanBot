@@ -41,25 +41,25 @@ export const helpBugReportButton = {
     name: BUG_REPORT_BUTTON_ID,
     async execute(interaction, client) {
         const githubButton = new ButtonBuilder()
-            .setLabel('🐛 Report Bug on GitHub')
+            .setLabel('king dom')
             .setStyle(ButtonStyle.Link)
-            .setURL('https://github.com/codebymitch/TitanBot/issues');
+            .setURL('https://ptb.discord.com/channels/1526610936977166416/1526614440340881548');
 
         const bugRow = new ActionRowBuilder().addComponents(githubButton);
 
         const bugReportEmbed = createEmbed({
-            title: '🐛 Bug Report',
-            description: 'Found a bug? Please report it on our GitHub Issues page!\n\n' +
-                '**When reporting a bug, please include:**\n' +
-                '• 📝 Detailed description of the issue\n' +
-                '• 📋 Steps to reproduce the problem\n' +
-                '• 📸 Screenshots if applicable\n' +
-                '• 💻 Your bot version and environment\n\n' +
-                'This helps us fix issues faster and more effectively!',
+            title: 'king dom',
+            description: 'هل وجدت خطأً؟ يرجى الإبلاغ عنه على صفحة المشكلات في king dom.!\n\n' +
+                '**عند الإبلاغ عن خطأ برمجي، يرجى تضمين:**\n' +
+                '• 📝 وصف تفصيلي للمشكلة\n' +
+                '• 📋 خطوات إعادة إنتاج المشكلة\n' +
+                '• 📸 لقطات الشاشة إن وجدت\n' +
+                '• 💻 إصدار البوت الخاص بك وبيئته\n\n' +
+                'هذا يساعدنا على حل المشكلات بشكل أسرع وأكثر فعالية!',
             color: 'error'
         });
         bugReportEmbed.setFooter({
-            text: 'TitanBot Bug Reporting System',
+            text: 'نظام الإبلاغ عن الأخطاء في king doom',
             iconURL: client.user.displayAvatarURL()
         });
         bugReportEmbed.setTimestamp();
