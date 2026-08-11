@@ -13,7 +13,7 @@ export async function logTicketEvent({ client, guildId, event }) {
   try {
     const guild = client.guilds.cache.get(guildId) || await client.guilds.fetch(guildId).catch(() => null);
     if (!guild) {
-      logger.warn(`تم استدعاء logTicketEvent بدون خادم GUID صالح: ${guildId}`);
+      logger.warn(`logTicketEvent invoked without valid guild: ${guildId}`);
       return;
     }
 
@@ -26,13 +26,13 @@ export async function logTicketEvent({ client, guildId, event }) {
 
     const channel = guild.channels.cache.get(logChannelId) || await guild.channels.fetch(logChannelId).catch(() => null);
     if (!channel) {
-      logger.warn(`لم يتم العثور على قناة سجل التكت: ${logChannelId} لنوع الحدث: ${event.type}`);
+      logger.warn(`Ticket log channel not found: ${logChannelId} for event type: ${event.type}`);
       return;
     }
 
     const permissions = channel.permissionsFor(guild.members.me);
-    if (!permissions.has(['إرسال الرسائل', 'روابط التضمين'])) {
-      logger.warn(`الأذونات المفقودة في قناة سجل التكت: ${logChannelId}`);
+    if (!permissions.has(['SendMessages', 'EmbedLinks'])) {
+      logger.warn(`Missing permissions in ticket log channel: ${logChannelId}`);
       return;
     }
 
@@ -45,9 +45,9 @@ export async function logTicketEvent({ client, guildId, event }) {
     }
 
     await channel.send(messageOptions);
-    logger.info(`تم تسجيل حدث التكت: ${event.type} في النقابة ${guildId}`);
+    logger.info(`Ticket event logged: ${event.type} in guild ${guildId}`);
   } catch (error) {
-    logger.error('حدث خطأ في تسجيل التكت:', error);
+    logger.error('Error logging ticket event:', error);
   }
 }
 
@@ -64,7 +64,7 @@ export async function logTicketFeedback({
     client,
     guildId,
     event: {
-      type: 'تعليق',
+      type: 'feedback',
       ticketId: ticketChannelId,
       ticketNumber,
       userId,
@@ -78,18 +78,18 @@ export async function logTicketFeedback({
 
 function getLogChannelForEventType(config, eventType) {
   switch (eventType) {
-    case 'نص':
+    case 'transcript':
       return config.ticketTranscriptChannelId || null;
 
-    case 'يفتح':
-    case 'يغلق':
-    case 'يمسح':
-    case 'مطالبة':
-    case 'عدم المطالبة':
-    case 'أولوية':
-    case 'التثبيت':
-    case 'إلغاء التثبيت':
-    case 'تعليق':
+    case 'open':
+    case 'close':
+    case 'delete':
+    case 'claim':
+    case 'unclaim':
+    case 'priority':
+    case 'pin':
+    case 'unpin':
+    case 'feedback':
       return config.ticketLogsChannelId || null;
 
     default:
@@ -98,20 +98,20 @@ function getLogChannelForEventType(config, eventType) {
 }
 
 const TICKET_EVENT_STYLES = {
-  open: { color: 0x5865F2, title: 'تم إنشاء التكت' },
-  close: { color: 0xED4245, title: 'تم إغلاق التكت' },
-  delete: { color: 0x8b0000, title: 'تم حذف التكت' },
-  claim: { color: 0x5865F2, title: 'تم استلام التكت' },
-  unclaim: { color: 0xFAA61A, title: 'تكت غير مُستلمة' },
-  priority: { color: 0x9b59b6, title: 'تم تحديث الأولوية' },
-  transcript: { color: 0x57F287, title: 'تم إنشاء النص' },
-  feedback: { color: 0x57F287, title: 'التعليقات الواردة' },
+  open: { color: 0x5865F2, title: 'Ticket Created' },
+  close: { color: 0xED4245, title: 'Ticket Closed' },
+  delete: { color: 0x8b0000, title: 'Ticket Deleted' },
+  claim: { color: 0x5865F2, title: 'Ticket Claimed' },
+  unclaim: { color: 0xFAA61A, title: 'Ticket Unclaimed' },
+  priority: { color: 0x9b59b6, title: 'Priority Updated' },
+  transcript: { color: 0x57F287, title: 'Transcript Generated' },
+  feedback: { color: 0x57F287, title: 'Feedback Received' },
 };
 
 async function createTicketLogEmbed(guild, event) {
-  const style = TICKET_EVENT_STYLES[event.type] || { color: 0x95a5a6, title: 'تكت' };
+  const style = TICKET_EVENT_STYLES[event.type] || { color: 0x95a5a6, title: 'Ticket Event' };
   const ticketNumber = event.ticketNumber || event.ticketId;
-  const ticketRef = ticketNumber ? `#${ticketNumber}` : 'مجهول';
+  const ticketRef = ticketNumber ? `#${ticketNumber}` : 'Unknown';
   const channelMention = event.ticketId ? `<#${event.ticketId}>` : null;
   const executorMention = event.executorId ? `<@${event.executorId}>` : null;
   const userMention = event.userId ? `<@${event.userId}>` : null;
@@ -119,42 +119,42 @@ async function createTicketLogEmbed(guild, event) {
   let inlineFields = [];
   let fields = [];
   let author = null;
-  let footer = { text: 'نظام تكت TitanBot' };
+  let footer = { text: 'TitanBot Ticketing' };
 
   switch (event.type) {
     case 'open':
       author = await resolveUserAuthor(guild.client, event.userId);
       inlineFields = [
-        { name: 'تكت', value: ticketRef, inline: true },
-        { name: 'المنشئ', value: userMention || 'مجهول', inline: true },
+        { name: 'Ticket', value: ticketRef, inline: true },
+        { name: 'Creator', value: userMention || 'Unknown', inline: true },
       ];
       if (channelMention) {
-        inlineFields.push({ name: 'قناة', value: channelMention, inline: true });
+        inlineFields.push({ name: 'Channel', value: channelMention, inline: true });
       }
       if (event.reason) {
-        fields.push({ name: 'سبب', value: String(event.reason).slice(0, 1024), inline: false });
+        fields.push({ name: 'Reason', value: String(event.reason).slice(0, 1024), inline: false });
       }
       break;
 
     case 'close':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'تكت', value: ticketRef, inline: true },
-        { name: 'مغلق بواسطة', value: executorMention || 'مجهول', inline: true },
+        { name: 'Ticket', value: ticketRef, inline: true },
+        { name: 'Closed by', value: executorMention || 'Unknown', inline: true },
       ];
       if (channelMention) {
-        inlineFields.push({ name: 'قناة', value: channelMention, inline: true });
+        inlineFields.push({ name: 'Channel', value: channelMention, inline: true });
       }
       if (event.reason) {
-        fields.push({ name: 'سبب', value: String(event.reason).slice(0, 1024), inline: false });
+        fields.push({ name: 'Reason', value: String(event.reason).slice(0, 1024), inline: false });
       }
       break;
 
     case 'delete':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'تكت', value: ticketRef, inline: true },
-        { name: 'تم الحذف بواسطة', value: executorMention || 'مجهول', inline: true },
+        { name: 'Ticket', value: ticketRef, inline: true },
+        { name: 'Deleted by', value: executorMention || 'Unknown', inline: true },
       ];
       break;
 
@@ -162,10 +162,10 @@ async function createTicketLogEmbed(guild, event) {
     case 'unclaim':
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'تكت', value: ticketRef, inline: true },
+        { name: 'Ticket', value: ticketRef, inline: true },
         {
-          name: event.type === 'مطالبة' ? 'تمت المطالبة به بواسطة' : 'غير مطالب به من قبل',
-          value: executorMention || 'مجهول',
+          name: event.type === 'claim' ? 'Claimed by' : 'Unclaimed by',
+          value: executorMention || 'Unknown',
           inline: true,
         },
       ];
@@ -175,12 +175,12 @@ async function createTicketLogEmbed(guild, event) {
       const priorityEmojis = { none: '⚪', low: '🔵', medium: '🟢', high: '🟡', urgent: '🔴' };
       const priorityLabel = event.priority
         ? `${priorityEmojis[event.priority] || '⚪'} ${event.priority.charAt(0).toUpperCase()}${event.priority.slice(1)}`
-        : 'مجهول';
+        : 'Unknown';
       author = await resolveUserAuthor(guild.client, event.executorId);
       inlineFields = [
-        { name: 'تكت', value: ticketRef, inline: true },
-        { name: 'أولوية', value: priorityLabel, inline: true },
-        { name: 'تم التحديث بواسطة', value: executorMention || 'مجهول', inline: true },
+        { name: 'Ticket', value: ticketRef, inline: true },
+        { name: 'Priority', value: priorityLabel, inline: true },
+        { name: 'Updated by', value: executorMention || 'Unknown', inline: true },
       ];
       break;
     }
