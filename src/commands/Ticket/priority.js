@@ -35,11 +35,11 @@ export default {
 
         const permissionContext = await getTicketPermissionContext({ client, interaction });
         if (!permissionContext.ticketData) {
-            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'This command can only be used in a valid ticket channel.' });
+            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'لا يمكن استخدام هذا الأمر إلا في قناة تكت صالحة.' });
         }
 
         if (!permissionContext.canManageTicket) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'You need the `Manage Channels` permission or the configured `Ticket Staff Role` to change ticket priority.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'تحتاج إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن لتغيير أولوية التذكرة.' });
         }
 
         const priorityLevel = interaction.options.getString("level");
@@ -48,13 +48,13 @@ export default {
         await InteractionHelper.safeEditReply(interaction, {
             embeds: [
                 successEmbed(
-                    "Priority Updated",
-                    `Ticket priority set to **${priorityLevel.toUpperCase()}**.`,
+                    "تم تحديث الأولوية",
+                    `تم تحديد أولوية التكت إلى **${priorityLevel.toUpperCase()}**.`,
                 ),
             ],
         });
 
-        logger.info('Ticket priority updated successfully', {
+        logger.info('تم تحديث أولوية التكت بنجاح', {
             userId: interaction.user.id,
             userTag: interaction.user.tag,
             channelId: interaction.channel.id,
