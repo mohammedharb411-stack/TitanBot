@@ -20,11 +20,11 @@ export default {
 
         const permissionContext = await getTicketPermissionContext({ client, interaction });
         if (!permissionContext.ticketData) {
-            return await replyUserError(interaction, { type: 'إدخال غير صالح', message: 'لا يمكن استخدام هذا الأمر إلا في قناة تكت صالحة.' });
+            return await replyUserError(interaction, { type: ErrorTypes.VALIDATION, message: 'لا يمكن استخدام هذا الأمر إلا في قناة تكت صالحة.' });
         }
 
         if (!permissionContext.canManageTicket) {
-            return await replyUserError(interaction, { type: 'إدخال غير صالح', message: 'أنت بحاجة إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن للمطالبة بالتكت التذاكر.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'أنت بحاجة إلى إذن "إدارة القنوات" أو دور "موظف التكت" المُكوّن للمطالبة بالتكت التذاكر.' });
         }
 
         await claimTicket(interaction.channel, interaction.user);
