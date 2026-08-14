@@ -18,13 +18,14 @@ import {
     getApplicationRoleSettings
 } from '../../utils/database.js';
 
+// دالة مساعدة لتنسيق حالة الطلب (النص والرمز التعبيري)
 function getApplicationStatusPresentation(statusValue) {
     const normalized = typeof statusValue === 'string' ? statusValue.trim().toLowerCase() : 'unknown';
     const statusLabel =
-        normalized === 'pending' ? 'In Progress' :
-        normalized === 'approved' ? 'Accepted' :
-        normalized === 'denied' ? 'Denied' :
-        'Unknown';
+        normalized === 'pending' ? 'قيد الانتظار' :
+        normalized === 'approved' ? 'مقبول' :
+        normalized === 'denied' ? 'مرفوض' :
+        'غير معروف';
     const statusEmoji =
         normalized === 'pending' ? '🟡' :
         normalized === 'approved' ? '🟢' :
@@ -38,15 +39,15 @@ export default {
     slashOnly: true,
     data: new SlashCommandBuilder()
         .setName("apply")
-        .setDescription("Manage role applications")
+        .setDescription("إدارة طلبات الانضمام للرتب")
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("submit")
-                .setDescription("Submit an application for a role")
+                .setDescription("تقديم طلب للحصول على رتبة")
                 .addStringOption((option) =>
                     option
                         .setName("application")
-                        .setDescription("The application you want to submit")
+                        .setDescription("الرتبة أو الطلب الذي تريد التقديم عليه")
                         .setRequired(true)
                         .setAutocomplete(true),
                 ),
@@ -54,41 +55,44 @@ export default {
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("status")
-                .setDescription("Check the status of your application")
+                .setDescription("التحقق من حالة طلبك")
                 .addStringOption((option) =>
                     option
                         .setName("id")
-                        .setDescription("Application ID (leave empty to see all)")
+                        .setDescription("معرّف الطلب (اتركه فارغاً لعرض كافة الطلبات)")
                         .setRequired(false),
                 ),
         )
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("list")
-                .setDescription("List available applications to apply for"),
+                .setDescription("عرض قائمة بالطلبات المتاحة للتقديم"),
         ),
 
     category: "Community",
 
+    // تنفيذ الأمر التفاعلي الرئيسي مع معالجة الأخطاء
     execute: withErrorHandling(async (interaction) => {
         if (!interaction.inGuild()) {
-            return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'This command can only be used in a server.' });
+            return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'يمكن استخدام هذا الأمر داخل السيرفرات فقط.' });
         }
 
         const { options, guild, member } = interaction;
         const subcommand = options.getSubcommand();
 
+        // تأجيل الرد لأوامر الاستعلام وليس التقديم (لأن التقديم سيفتح Modal)
         if (subcommand !== "submit") {
             const isListCommand = subcommand === "list";
             await InteractionHelper.safeDefer(interaction, { flags: isListCommand ? [] : ["Ephemeral"] });
         }
 
-        logger.info(`Apply command executed: ${subcommand}`, {
+        logger.info(`تم تنفيذ أمر التقديم: ${subcommand}`, {
             userId: interaction.user.id,
             guildId: guild.id,
             subcommand
         });
 
+        // جلب إعدادات نظام الطلبات الخاص بالسيرفر
         const settings = await getApplicationSettings(
             interaction.client,
             guild.id,
@@ -96,9 +100,9 @@ export default {
         
         if (!settings.enabled) {
             throw createError(
-                'Applications are disabled',
+                'الطلبات معطلة',
                 ErrorTypes.CONFIGURATION,
-                'Applications are currently disabled in this server.',
+                'تقديم الطلبات معطل حالياً في هذا السيرفر.',
                 { guildId: guild.id }
             );
         }
@@ -113,6 +117,7 @@ export default {
     }, { type: 'command', commandName: 'apply' })
 };
 
+// دالة معالجة نموذج الأسئلة (Modal Submit)
 export async function handleApplicationModal(interaction) {
     if (!interaction.isModalSubmit()) return;
     
@@ -125,13 +130,13 @@ export async function handleApplicationModal(interaction) {
     const applicationRole = applicationRoles.find(appRole => appRole.roleId === roleId);
     
     if (!applicationRole) {
-        return await replyUserError(interaction, { type: ErrorTypes.CONFIGURATION, message: 'Application configuration not found.' });
+        return await replyUserError(interaction, { type: ErrorTypes.CONFIGURATION, message: 'لم يتم العثور على إعدادات التقديم.' });
     }
     
     const role = interaction.guild.roles.cache.get(roleId);
     
     if (!role) {
-        return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'Role not found.' });
+        return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'الرتبة غير موجودة بالسيرفر.' });
     }
     
     const answers = [];
@@ -143,6 +148,7 @@ export async function handleApplicationModal(interaction) {
         questions = roleSettings.questions;
     }
     
+    // تجميع الإجابات من المدخلات
     for (let i = 0; i < questions.length; i++) {
         const answer = interaction.fields.getTextInputValue(`q${i}`);
         answers.push({
@@ -152,6 +158,7 @@ export async function handleApplicationModal(interaction) {
     }
     
     try {
+        // إنشاء الطلب عبر خدمة التقديم
         const application = await ApplicationService.submitApplication(interaction.client, {
             guildId: interaction.guild.id,
             userId: interaction.user.id,
@@ -163,14 +170,15 @@ export async function handleApplicationModal(interaction) {
         });
         
         const embed = successEmbed(
-            'Application Submitted',
-            `Your application for **${applicationRole.name}** has been submitted successfully!\n\n` +
-            `Application ID: \`${application.id}\`\n` +
-            `You can check the status with \`/apply status id:${application.id}\``
+            'تم تقديم الطلب بنجاح',
+            `تم إرسال طلبك لرتبة **${applicationRole.name}** بنجاح!\n\n` +
+            `معرّف الطلب: \`${application.id}\`\n` +
+            `يمكنك التحقق من حالة الطلب باستخدام \`/apply status id:${application.id}\``
         );
         
         await InteractionHelper.safeEditReply(interaction, { embeds: [embed], flags: ["Ephemeral"] });
         
+        // إرسال سجل التقديم إلى القناة المحددة للطلبات
         const settings = await getApplicationSettings(interaction.client, interaction.guild.id);
         const roleSettings = await getApplicationRoleSettings(interaction.client, interaction.guild.id, roleId);
         const guildConfig = await getGuildConfig(interaction.client, interaction.guild.id);
@@ -184,15 +192,15 @@ export async function handleApplicationModal(interaction) {
                 eventType: EVENT_TYPES.APPLICATION_SUBMIT,
                 channelId: logChannelId,
                 data: {
-                    title: 'Application Submitted',
+                    title: 'طلب جديد مسجل',
                     lines: [
-                        formatLogLine('Applicant', `<@${interaction.user.id}> (${interaction.user.tag})`),
-                        formatLogLine('Application', applicationRole.name),
-                        formatLogLine('Role', role.name),
-                        formatLogLine('Application ID', `\`${application.id}\``),
+                        formatLogLine('المتقدم', `<@${interaction.user.id}> (${interaction.user.tag})`),
+                        formatLogLine('الطلب', applicationRole.name),
+                        formatLogLine('الرتبة', role.name),
+                        formatLogLine('معرف الطلب', `\`${application.id}\``),
                     ],
                     inlineFields: [
-                        { name: 'Status', value: '🟡 In Progress', inline: true },
+                        { name: 'الحالة', value: '🟡 قيد الانتظار', inline: true },
                     ],
                     author: await resolveUserAuthor(interaction.client, interaction.user.id),
                 },
@@ -207,7 +215,7 @@ export async function handleApplicationModal(interaction) {
         }
         
     } catch (error) {
-        logger.error('Error creating application:', {
+        logger.error('خطأ أثناء إنشاء الطلب:', {
             error: error.message,
             userId: interaction.user.id,
             guildId: interaction.guild.id,
@@ -222,53 +230,54 @@ export async function handleApplicationModal(interaction) {
     }
 }
 
+// دالة عرض القائمة بالطلبات المتاحة
 async function handleList(interaction) {
     try {
         const applicationRoles = await getApplicationRoles(interaction.client, interaction.guild.id);
         
         if (applicationRoles.length === 0) {
-            return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'No applications are currently available.' });
+            return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'لا توجد طلبات متاحة للتقديم حالياً.' });
         }
 
         const embed = createEmbed({
-            title: "Available Applications",
-            description: "Here are the roles you can apply for:"
+            title: "الطلبات المتاحة",
+            description: "إليك الرتب التي يمكنك التقديم عليها حالياً:"
         });
 
         applicationRoles.forEach((appRole, index) => {
             const role = interaction.guild.roles.cache.get(appRole.roleId);
             embed.addFields({
                 name: `${index + 1}. ${appRole.name}`,
-                value: `**Role:** ${role ?`<@&${appRole.roleId}>`: 'Role not found'}\n` +
-                       `**Apply with:** \`/apply submit application:"${appRole.name}"\``,
+                value: `**الرتبة:** ${role ? `<@&${appRole.roleId}>` : 'الرتبة غير موجودة'}\n` +
+                       `**للتقديم استخدم:** \`/apply submit application:"${appRole.name}"\``,
                 inline: false
             });
         });
 
         embed.setFooter({
-            text: "Use /apply submit application:<name> to apply for any of these roles."
+            text: "استخدم الأمر /apply submit application:<الاسم> للتقديم على أي رتبة."
         });
 
         return InteractionHelper.safeEditReply(interaction, { embeds: [embed] });
     } catch (error) {
-        logger.error('Error listing applications:', {
+        logger.error('خطأ في استعراض أعياد الميلاد/الطلبات المتاحة:', {
             error: error.message,
             guildId: interaction.guild.id,
             stack: error.stack
         });
         
         throw createError(
-            'Failed to load applications',
+            'فشل تحمّيل قائمة الطلبات',
             ErrorTypes.DATABASE,
-            'Failed to load applications. Please try again later.',
+            'تعذّر تحمّيل الطلبات، يرجى المحاولة لاحقاً.',
             { guildId: interaction.guild.id }
         );
     }
 }
 
+// دالة بدء تقديم الطلب وإظهار النموذج (Modal)
 async function handleSubmit(interaction, settings) {
     const applicationName = interaction.options.getString("application");
-    const member = interaction.member;
 
     const applicationRoles = await getApplicationRoles(interaction.client, interaction.guild.id);
     
@@ -277,9 +286,10 @@ async function handleSubmit(interaction, settings) {
     );
 
     if (!applicationRole) {
-        return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'Use `/apply list` to see available applications.' });
+        return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'استخدم الأمر `/apply list` للتحقق من الطلبات المتاحة.' });
     }
 
+    // التحقق من وجود طلب معلق سابق
     const userApps = await getUserApplications(
         interaction.client,
         interaction.guild.id,
@@ -288,17 +298,18 @@ async function handleSubmit(interaction, settings) {
     const pendingApp = userApps.find((app) => app.status === "pending");
 
     if (pendingApp) {
-        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'You already have a pending application. Please wait for it to be reviewed.' });
+        return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لديك طلب قيد الانتظار بالفعل، يرجى الانتظار لحين مراجعته.' });
     }
 
     const role = interaction.guild.roles.cache.get(applicationRole.roleId);
     if (!role) {
-        return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'The role for this application no longer exists.' });
+        return await replyUserError(interaction, { type: ErrorTypes.USER_INPUT, message: 'الرتبة المرتبطة بهذا الطلب لم تعد موجودة.' });
     }
 
+    // بناء النموذج التفاعلي Modal
     const modal = new ModalBuilder()
         .setCustomId(`app_modal_${applicationRole.roleId}`)
-        .setTitle(`Application for ${applicationRole.name}`);
+        .setTitle(`تقديم طلب لرتبة ${applicationRole.name}`);
 
     let questions = settings.questions?.length ? settings.questions : getDefaultApplicationQuestions();
     const roleSettings = await getApplicationRoleSettings(interaction.client, interaction.guild.id, applicationRole.roleId);
@@ -325,9 +336,11 @@ async function handleSubmit(interaction, settings) {
     await interaction.showModal(modal);
 }
 
+// دالة الاستعلام عن حالة الطلب
 async function handleStatus(interaction) {
     const appId = interaction.options.getString("id");
 
+    // في حال البحث عن طلب برقم ID معين
     if (appId) {
         const application = await getApplication(
             interaction.client,
@@ -336,24 +349,27 @@ async function handleStatus(interaction) {
         );
 
         if (!application || application.userId !== interaction.user.id) {
-            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'Application not found or you do not have permission to view it.' });
+            return await replyUserError(interaction, { type: ErrorTypes.PERMISSION, message: 'الطلب غير موجود أو لا تملك صلاحية لرؤيته.' });
         }
 
         const submittedAt = application?.createdAt ? new Date(application.createdAt) : null;
         const submittedAtDisplay = submittedAt && !Number.isNaN(submittedAt.getTime())
-            ? submittedAt.toLocaleString()
-            : 'Unknown date';
+            ? submittedAt.toLocaleString('ar-EG')
+            : 'تاريخ غير معروف';
         const statusView = getApplicationStatusPresentation(application.status);
+        
         const embed = createEmbed({
-            title: `Application #${application.id} - ${application.roleName || 'Unknown Role'}`,
+            title: `طلب رقم #${application.id} - ${application.roleName || 'رتبة غير معروفة'}`,
             description:
-                `**Application ID:** \`${application.id}\`\n` +
-                `**Status:** ${statusView.statusEmoji} ${statusView.statusLabel}\n` +
-                `**Submitted:** ${submittedAtDisplay}`
+                `**معرّف الطلب:** \`${application.id}\`\n` +
+                `**الحالة:** ${statusView.statusEmoji} ${statusView.statusLabel}\n` +
+                `**تاريخ التقديم:** ${submittedAtDisplay}`
         });
 
         return InteractionHelper.safeEditReply(interaction, { embeds: [embed], flags: ["Ephemeral"] });
-    } else {
+    } 
+    // في حال الاستعلام عن كافة الطلبات الخاصة بالحساب
+    else {
         const applications = await getUserApplications(
             interaction.client,
             interaction.guild.id,
@@ -361,7 +377,7 @@ async function handleStatus(interaction) {
         );
 
         if (applications.length === 0) {
-            return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'You have not submitted any applications yet.' });
+            return await replyUserError(interaction, { type: ErrorTypes.UNKNOWN, message: 'لم تقم بتقديم أي طلبات حتى الآن.' });
         }
 
         const recentApplications = applications
@@ -369,29 +385,29 @@ async function handleStatus(interaction) {
             .slice(0, 10);
 
         const embed = createEmbed({
-            title: "Your Applications",
-            description: `Showing ${recentApplications.length} recent application(s).`
+            title: "طلباتك المقدمة",
+            description: `عرض أحدث ${recentApplications.length} طلب/طلبات.`
         });
 
         recentApplications.forEach((application) => {
             const submittedAt = application?.createdAt ? new Date(application.createdAt) : null;
             const submittedAtDisplay = submittedAt && !Number.isNaN(submittedAt.getTime())
-                ? submittedAt.toLocaleDateString()
-                : 'Unknown date';
+                ? submittedAt.toLocaleDateString('ar-EG')
+                : 'تاريخ غير معروف';
             const statusView = getApplicationStatusPresentation(application.status);
 
             embed.addFields({
-                name: `${statusView.statusEmoji} ${application.roleName || 'Unknown Role'} (${statusView.statusLabel})`,
+                name: `${statusView.statusEmoji} ${application.roleName || 'رتبة غير معروفة'} (${statusView.statusLabel})`,
                 value:
-                    `**ID:** \`${application.id}\`\n` +
-                    `**Status:** ${statusView.statusEmoji} ${statusView.statusLabel}\n` +
-                    `**Submitted:** ${submittedAtDisplay}`,
+                    `**المعرّف:** \`${application.id}\`\n` +
+                    `**الحالة:** ${statusView.statusEmoji} ${statusView.statusLabel}\n` +
+                    `**تاريخ التقديم:** ${submittedAtDisplay}`,
                 inline: true,
             });
         });
 
         if (applications.length > recentApplications.length) {
-            embed.setFooter({ text: `Showing latest ${recentApplications.length} of ${applications.length} applications.` });
+            embed.setFooter({ text: `عرض أحدث ${recentApplications.length} من أصل ${applications.length} طلبات.` });
         }
 
         return InteractionHelper.safeEditReply(interaction, { embeds: [embed], flags: ["Ephemeral"] });
